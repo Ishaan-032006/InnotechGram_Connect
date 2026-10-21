@@ -1,0 +1,6 @@
+body{font-family:'Inter',sans-serif}
+.low-bandwidth img,.low-bandwidth .bg-decorative{display:none!important}
+.low-bandwidth *{box-shadow:none!important;animation:none!important;transition:none!important}
+.low-bandwidth .card-element{border:2px solid #333!important;background:#fff!important}
+.text-size-sm{font-size:.875rem}.text-size-base{font-size:1rem}.text-size-lg{font-size:1.125rem}
+.tab-btn.active{color:#16a34a;border-bottom:2px solid #16a34a;background-color:#f0fdf4}
