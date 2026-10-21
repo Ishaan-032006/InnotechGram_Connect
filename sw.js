@@ -1,6 +1,6 @@
 /* GramConnect service worker: offline support.
    Pehli baar online khulne par app shell + CDN files cache ho jaati hain. */
-const CACHE = 'gramconnect-v2';
+const CACHE = 'gramconnect-v3';
 const SHELL = ['./', 'index.html', 'style.css', 'app.js', 'i18n.js', 'extras.js'];
 
 self.addEventListener('install', e => {

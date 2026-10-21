@@ -1,6 +1,166 @@
-body{font-family:'Inter',sans-serif}
+
+/* ===== GramConnect: Rural Theme ===== */
+:root{
+  --cream:#fbf4e4; --paper:#fffcf3; --sand:#e8dcc0; --sand-dark:#d3c096;
+  --soil:#3f2a18; --soil-2:#5a4432; --soil-3:#86705a;
+  --leaf:#2f6b3f; --leaf-dark:#1f4d2c; --leaf-light:#e8f1de; --leaf-border:#cadbb8;
+  --clay:#c2571a; --clay-light:#fbe7d8; --clay-border:#f0c8aa;
+  --turmeric:#e3a21a; --turmeric-light:#fdf0cb; --turmeric-border:#f0dc9c; --turmeric-text:#85570a;
+  --river:#2d6a8a; --river-light:#e0eef5; --river-border:#bcd8e6;
+}
+
+/* ----- Original utility rules (low-bandwidth, text size) ----- */
 .low-bandwidth img,.low-bandwidth .bg-decorative{display:none!important}
 .low-bandwidth *{box-shadow:none!important;animation:none!important;transition:none!important}
 .low-bandwidth .card-element{border:2px solid #333!important;background:#fff!important}
+.low-bandwidth header.sticky::after,
+.low-bandwidth .bg-gradient-to-r::before,
+.low-bandwidth .bg-gradient-to-r::after{display:none}
+body#app-body.low-bandwidth{background-image:none}
 .text-size-sm{font-size:.875rem}.text-size-base{font-size:1rem}.text-size-lg{font-size:1.125rem}
-.tab-btn.active{color:#16a34a;border-bottom:2px solid #16a34a;background-color:#f0fdf4}
+
+/* ----- Base ----- */
+html{scroll-behavior:smooth}
+body{font-family:'Hind','Inter',sans-serif;line-height:1.55}
+body#app-body{
+  background-color:var(--cream);
+  background-image:radial-gradient(rgba(139,94,52,.10) 1.2px,transparent 1.6px);
+  background-size:22px 22px;
+  color:var(--soil);
+}
+h1,h2,h3{font-family:'Baloo 2','Hind',sans-serif;letter-spacing:.1px}
+::selection{background:var(--turmeric);color:var(--soil)}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:var(--cream)}
+::-webkit-scrollbar-thumb{background:var(--sand-dark);border-radius:10px;border:2px solid var(--cream)}
+body :focus-visible{outline:3px solid var(--turmeric);outline-offset:2px}
+
+/* ----- Header with durrie strip ----- */
+body header.sticky{
+  background-color:var(--paper);
+  border-bottom:0;
+  box-shadow:0 2px 10px rgba(90,60,30,.12);
+}
+body header.sticky::after{
+  content:"";position:absolute;left:0;right:0;bottom:-6px;height:6px;
+  background:repeating-linear-gradient(90deg,
+    var(--clay) 0 16px, var(--turmeric) 16px 32px,
+    var(--leaf) 32px 48px, var(--river) 48px 64px);
+}
+
+/* ----- Tabs ----- */
+body .tab-btn{border-bottom:3px solid transparent;border-radius:12px;font-weight:600;transition:background .2s,color .2s}
+body .tab-btn:hover{background:var(--leaf-light)}
+body .tab-btn.active{color:var(--leaf-dark);border-bottom-color:var(--clay);background:var(--turmeric-light)}
+
+/* ----- Hero: sun + fields ----- */
+body .bg-gradient-to-r.from-emerald-900{
+  background-image:linear-gradient(120deg,#1f4d2c 0%,#2f6b3f 55%,#4d7f3a 100%);
+  border:3px solid #17391f;
+}
+body .bg-gradient-to-r.from-emerald-900::before{
+  content:"";position:absolute;right:9%;top:-34px;width:150px;height:150px;border-radius:50%;
+  background:#f3b43a;opacity:.95;z-index:0;pointer-events:none;
+  box-shadow:0 0 0 16px rgba(243,180,58,.25),0 0 0 36px rgba(243,180,58,.12);
+}
+body .bg-gradient-to-r.from-emerald-900::after{
+  content:"";position:absolute;left:0;right:0;bottom:0;height:64px;z-index:0;pointer-events:none;
+  background:
+    repeating-linear-gradient(90deg,rgba(255,255,255,.07) 0 8px,transparent 8px 26px),
+    linear-gradient(to top,rgba(15,45,22,.75),transparent);
+}
+@media (max-width:640px){
+  body .bg-gradient-to-r.from-emerald-900::before{width:90px;height:90px;right:6%;top:-24px}
+}
+
+/* ----- Cards (clay look) ----- */
+body .card-element{
+  background-color:var(--paper);
+  border:2px solid var(--sand);
+  border-radius:20px;
+  box-shadow:0 4px 0 var(--sand-dark),0 10px 24px rgba(90,60,30,.08);
+  transition:transform .2s,box-shadow .2s,border-color .2s;
+}
+body .card-element:hover{border-color:var(--leaf)}
+body .cursor-pointer.card-element:hover{
+  transform:translateY(-3px);
+  box-shadow:0 7px 0 var(--sand-dark),0 14px 28px rgba(90,60,30,.12);
+}
+body .w-12.h-12{border-radius:50%}
+body #view-home .space-y-3 > div{border-left:6px solid var(--leaf)}
+body #view-home .space-y-3 > div:nth-child(2){border-left-color:var(--river)}
+body .bg-gradient-to-br.from-slate-900{background-image:linear-gradient(145deg,#3a2616,#5b3a20)}
+
+/* ----- Buttons (big tap targets) ----- */
+body button.bg-emerald-600,body a.bg-emerald-600,body button.bg-emerald-500{
+  min-height:44px;font-weight:700;border-radius:14px;box-shadow:0 3px 0 rgba(0,0,0,.18);
+}
+body button.bg-emerald-600:active,body button.bg-emerald-500:active{transform:translateY(2px);box-shadow:none}
+
+/* ----- Inputs ----- */
+body input[type=text],body input[type=tel],body input[type=password],body select{
+  background-color:#fff;border:2px solid var(--sand-dark);border-radius:14px;min-height:44px;color:var(--soil);
+}
+body input:focus,body select:focus{outline:none;border-color:var(--leaf);box-shadow:0 0 0 4px rgba(47,107,63,.18)}
+
+/* ----- Modals, table, footer ----- */
+body #info-modal > div,body #auth-modal > div{border:3px solid var(--sand);box-shadow:0 8px 0 var(--sand-dark),0 24px 48px rgba(0,0,0,.25)}
+body tbody tr:hover{background:var(--leaf-light)}
+body #toast{border-radius:14px;border-left:6px solid var(--turmeric)}
+body footer.text-center{background:#3a2616;color:#e9dcc0;border-top:5px solid var(--turmeric);padding:18px 16px;font-size:.85rem}
+
+/* ----- Page animation ----- */
+@keyframes gcFade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.view-content:not(.hidden){animation:gcFade .35s ease both}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ===== Palette remap (Tailwind colours -> rural colours) ===== */
+/* text */
+body .text-slate-950{color:#2b1a0e}
+body .text-slate-900,body .text-slate-800{color:var(--soil)}
+body .text-slate-700{color:var(--soil-2)}
+body .text-slate-600{color:#6b5441}
+body .text-slate-500{color:var(--soil-3)}
+body .text-slate-400{color:#a8927a}
+body .text-slate-300{color:#eadfc3}
+body .text-emerald-600{color:var(--leaf)}
+body .text-emerald-700,body .text-emerald-800{color:var(--leaf-dark)}
+body .text-emerald-400,body .text-emerald-300{color:#f2c14e}
+body .text-emerald-200,body .text-emerald-100{color:#e3efd6}
+body .hover\:text-emerald-600:hover{color:var(--leaf)}
+body .hover\:text-emerald-200:hover{color:#fff}
+body .text-blue-600,body .text-blue-700,body .text-blue-800{color:var(--river)}
+body .text-red-600,body .text-red-700,body .text-red-800{color:var(--clay)}
+body .text-red-400{color:#f4a06a}
+body .text-amber-700,body .text-amber-800{color:var(--turmeric-text)}
+
+/* backgrounds */
+body .bg-white{background-color:var(--paper)}
+body .bg-slate-50{background-color:var(--paper)}
+body .bg-slate-100{background-color:var(--turmeric-light)}
+body .bg-slate-900{background-color:#3a2616}
+body .hover\:bg-slate-800:hover{background-color:#4d331d}
+body .bg-slate-900\/60{background-color:rgba(58,38,22,.6)}
+body .hover\:bg-slate-900:hover{background-color:#3a2616}
+body .bg-slate-800\/80{background-color:rgba(255,255,255,.08)}
+body .hover\:bg-slate-700:hover{background-color:rgba(255,255,255,.16)}
+body .bg-emerald-600{background-color:var(--leaf)}
+body .hover\:bg-emerald-700:hover{background-color:var(--leaf-dark)}
+body .bg-emerald-700{background-color:var(--leaf-dark)}
+body .bg-emerald-500{background-color:var(--turmeric)}
+body .hover\:bg-emerald-600:hover{background-color:#c98c0f}
+body .bg-emerald-50,body .bg-emerald-100{background-color:var(--leaf-light)}
+body .hover\:bg-emerald-50:hover{background-color:var(--leaf-light)}
+body .bg-blue-50,body .bg-blue-100{background-color:var(--river-light)}
+body .bg-red-50,body .bg-red-100{background-color:var(--clay-light)}
+body .bg-amber-50,body .bg-amber-100{background-color:var(--turmeric-light)}
+
+/* borders */
+body .border-slate-100,body .border-slate-200,body .border-slate-300{border-color:var(--sand)}
+body .border-slate-700{border-color:#6b4a2e}
+body .border-emerald-100,body .border-emerald-200{border-color:var(--leaf-border)}
+body .border-emerald-600{border-color:var(--leaf)}
+body .hover\:border-emerald-500:hover,body .hover\:border-emerald-400:hover{border-color:var(--leaf)}
+body .border-blue-100{border-color:var(--river-border)}
+body .border-red-100{border-color:var(--clay-border)}
+body .border-amber-100{border-color:var(--turmeric-border)}

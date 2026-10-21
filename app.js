@@ -1,62 +1,120 @@
-/* ===== SCHEMES DATA (from rural_govt_schemes_india.csv) ===== */
+
+/* ===== EXTRA TRANSLATION KEYS (used by app.js; lang.js must load first) ===== */
+Object.assign(DICT.en, {
+  "sch.details": "Details & Apply",
+  "sch.showing": "Showing {shown} of {total} schemes",
+  "modal.benefit": "Benefit:",
+  "modal.note": "Visit the official website to apply or get details. Check eligibility and required documents there.",
+  "modal.visit": "Visit:",
+  "bw.on": "Low-BW: ON",
+  "bw.off": "Low-BW Mode",
+  "voice.on": "Voice: ON",
+  "voice.off": "Voice: OFF",
+  "ad.empty": "No users registered yet.",
+  "err.required": "All fields are required.",
+  "err.mobile": "Enter a valid 10-digit mobile number.",
+  "err.password": "Password must be at least 6 characters.",
+  "err.mismatch": "Passwords do not match.",
+  "err.exists": "An account with this mobile number already exists.",
+  "err.invalid": "Invalid mobile number or password.",
+  "msg.registered": "Account created, welcome {name}!",
+  "msg.loggedIn": "Logged in successfully!",
+  "msg.loggedOut": "Logged out."
+});
+Object.assign(DICT.hi, {
+  "sch.details": "विवरण और आवेदन",
+  "sch.showing": "{total} में से {shown} योजनाएँ दिखाई जा रही हैं",
+  "modal.benefit": "लाभ:",
+  "modal.note": "आवेदन या जानकारी के लिए आधिकारिक वेबसाइट पर जाएँ। पात्रता और ज़रूरी दस्तावेज़ वहीं देखें।",
+  "modal.visit": "वेबसाइट देखें:",
+  "bw.on": "लो-बैंडविड्थ: चालू",
+  "bw.off": "लो-बैंडविड्थ मोड",
+  "voice.on": "आवाज़: चालू",
+  "voice.off": "आवाज़: बंद",
+  "ad.empty": "अभी कोई उपयोगकर्ता पंजीकृत नहीं है।",
+  "err.required": "सभी फ़ील्ड भरना ज़रूरी है।",
+  "err.mobile": "कृपया सही 10 अंकों का मोबाइल नंबर डालें।",
+  "err.password": "पासवर्ड कम से कम 6 अक्षर का होना चाहिए।",
+  "err.mismatch": "दोनों पासवर्ड मेल नहीं खाते।",
+  "err.exists": "इस मोबाइल नंबर से खाता पहले से मौजूद है।",
+  "err.invalid": "मोबाइल नंबर या पासवर्ड गलत है।",
+  "msg.registered": "खाता बन गया, स्वागत है {name}!",
+  "msg.loggedIn": "लॉगिन सफल रहा!",
+  "msg.loggedOut": "लॉगआउट हो गया।"
+});
+
+/* ===== SCHEMES DATA =====
+   Row format: [category, name, benefit, website, name_hi, benefit_hi] */
 const SCHEMES = [
-["Health","Ayushman Bharat PM-JAY","Free hospital cover up to Rs 5 lakh per family","pmjay.gov.in"],
-["Health","Ayushman Vay Vandana","Health cover for senior citizens aged 70+","pmjay.gov.in"],
-["Health","National Health Mission (NHM)","Umbrella for rural health staff facilities and programmes","nhm.gov.in"],
-["Health","Ayushman Arogya Mandir (Health & Wellness Centres)","Primary care and screening close to the village","nhm.gov.in"],
-["Health","PM-ABHIM","Funding for health infrastructure and labs","nhm.gov.in"],
-["Health","Ayushman Bharat Digital Mission","ABHA health ID and digital health records","abdm.gov.in"],
-["Health","Janani Suraksha Yojana","Cash support for institutional delivery","nhm.gov.in"],
-["Health","PM Surakshit Matritva Abhiyan","Free antenatal check-ups for pregnant women","pmsma.mohfw.gov.in"],
-["Health","PM Matru Vandana Yojana","Cash benefit for the first child","pmmvy.wcd.gov.in"],
-["Health","Poshan 2.0 / Saksham Anganwadi","Nutrition for children pregnant women and nursing mothers","poshantracker.in"],
-["Health","PM Bhartiya Jan Aushadhi","Low-cost generic medicines","janaushadhi.gov.in"],
-["Jobs & Livelihood","VB-G RAM G (replaced MGNREGA from 1 Jul 2026)","125 days of guaranteed wage work per rural household","rural.gov.in"],
-["Jobs & Livelihood","DAY-NRLM (Lakhpati Didi)","Self-help groups credit and livelihood for rural women","aajeevika.gov.in"],
-["Jobs & Livelihood","DDU-GKY","Free job-linked skill training for rural youth","ddugky.gov.in"],
-["Jobs & Livelihood","PMEGP","Subsidised loans to start micro-enterprises","kviconline.gov.in/pmegpeportal"],
-["Jobs & Livelihood","PM Vishwakarma","Toolkit training and credit for artisans","pmvishwakarma.gov.in"],
-["Jobs & Livelihood","PMKVY / Skill India","Short-term skill courses with certification","skillindiadigital.gov.in"],
-["Jobs & Livelihood","e-Shram","National database and benefits for unorganised workers","eshram.gov.in"],
-["Jobs & Livelihood","PM Shram Yogi Maandhan","Pension for unorganised workers","maandhan.in"],
-["Jobs & Livelihood","PM Mudra Yojana","Collateral-free small business loans","mudra.org.in"],
-["Jobs & Livelihood","NSAP","Old-age widow and disability pensions","nsap.nic.in"],
-["Jobs & Livelihood","Atal Pension Yojana","Guaranteed pension after 60","jansuraksha.gov.in"],
-["Jobs & Livelihood","PMJJBY and PMSBY","Low-premium life and accident insurance","jansuraksha.gov.in"],
-["Basic Facilities","PMAY-Gramin","Pucca house for rural homeless and kutcha-house families","pmayg.nic.in"],
-["Basic Facilities","PMGSY","All-weather roads connecting villages","pmgsy.nic.in"],
-["Basic Facilities","Jal Jeevan Mission","Tap water connection to every rural home","jaljeevanmission.gov.in"],
-["Basic Facilities","Swachh Bharat Mission (Gramin)","Toilets and village sanitation","swachhbharatmission.gov.in"],
-["Basic Facilities","PM Ujjwala Yojana","LPG connection for poor households","pmuy.gov.in"],
-["Basic Facilities","PM Surya Ghar Muft Bijli","Rooftop solar with subsidy","pmsuryaghar.gov.in"],
-["Basic Facilities","PM-JANMAN","Housing roads and health for vulnerable tribal groups","tribal.nic.in"],
-["Basic Facilities","NFSA / PM Garib Kalyan Anna Yojana","Subsidised or free ration","nfsa.gov.in"],
-["Basic Facilities","PM POSHAN","Mid-day meals in schools","pmposhan.education.gov.in"],
-["Basic Facilities","BharatNet","Broadband for gram panchayats","bbnl.nic.in"],
-["Basic Facilities","SVAMITVA","Property cards for rural homeowners","svamitva.nic.in"],
-["Basic Facilities","PM Jan Dhan Yojana","Zero-balance bank account with insurance","pmjdy.gov.in"],
-["Basic Facilities","National Scholarship Portal","Central scholarships for students","scholarships.gov.in"],
-["Agriculture","PM-KISAN","Rs 6000 a year direct income support","pmkisan.gov.in"],
-["Agriculture","PM Fasal Bima Yojana","Crop insurance against weather and pest loss","pmfby.gov.in"],
-["Agriculture","Kisan Credit Card","Cheap short-term farm credit","pmkisan.gov.in (KCC section) or any bank"],
-["Agriculture","Soil Health Card","Soil test report with fertiliser advice","soilhealth.dac.gov.in"],
-["Agriculture","e-NAM","Online mandi trading","enam.gov.in"],
-["Agriculture","PM Krishi Sinchayee Yojana","Irrigation and per drop more crop","pmksy.gov.in"],
-["Agriculture","PM-KUSUM","Solar pumps and solar power for farmers","pmkusum.mnre.gov.in"],
-["Agriculture","Paramparagat Krishi Vikas Yojana","Support for organic farming","pgsindia-ncof.gov.in"],
-["Agriculture","PM Kisan Maandhan Yojana","Pension for small farmers","maandhan.in"],
-["Agriculture","Agriculture Infrastructure Fund","Loans for cold storage and warehouses","agriinfra.dac.gov.in"],
-["Agriculture","FPO Scheme","Setting up farmer producer organisations","sfacindia.com"],
-["Agriculture","PM Matsya Sampada Yojana","Fisheries support","pmmsy.dof.gov.in"],
-["Agriculture","Rashtriya Gokul Mission","Cattle and dairy development","dahd.gov.in"],
-["Agriculture","PM Formalisation of Micro Food Processing Enterprises","Subsidy for small food-processing units","pmfme.mofpi.gov.in"]
+["Health","Ayushman Bharat PM-JAY","Free hospital cover up to Rs 5 lakh per family","pmjay.gov.in","आयुष्मान भारत पीएम-जय","प्रति परिवार ₹5 लाख तक का मुफ़्त अस्पताल कवर"],
+["Health","Ayushman Vay Vandana","Health cover for senior citizens aged 70+","pmjay.gov.in","आयुष्मान वय वंदना","70+ आयु के वरिष्ठ नागरिकों के लिए स्वास्थ्य कवर"],
+["Health","National Health Mission (NHM)","Umbrella for rural health staff facilities and programmes","nhm.gov.in","राष्ट्रीय स्वास्थ्य मिशन (NHM)","ग्रामीण स्वास्थ्य कर्मियों, सुविधाओं और कार्यक्रमों की समग्र योजना"],
+["Health","Ayushman Arogya Mandir (Health & Wellness Centres)","Primary care and screening close to the village","nhm.gov.in","आयुष्मान आरोग्य मंदिर (स्वास्थ्य एवं कल्याण केंद्र)","गाँव के पास प्राथमिक उपचार और जाँच सुविधा"],
+["Health","PM-ABHIM","Funding for health infrastructure and labs","nhm.gov.in","पीएम-अभिम (PM-ABHIM)","स्वास्थ्य अवसंरचना और प्रयोगशालाओं के लिए वित्तीय सहायता"],
+["Health","Ayushman Bharat Digital Mission","ABHA health ID and digital health records","abdm.gov.in","आयुष्मान भारत डिजिटल मिशन","ABHA हेल्थ आईडी और डिजिटल स्वास्थ्य रिकॉर्ड"],
+["Health","Janani Suraksha Yojana","Cash support for institutional delivery","nhm.gov.in","जननी सुरक्षा योजना","अस्पताल में प्रसव के लिए नकद सहायता"],
+["Health","PM Surakshit Matritva Abhiyan","Free antenatal check-ups for pregnant women","pmsma.mohfw.gov.in","प्रधानमंत्री सुरक्षित मातृत्व अभियान","गर्भवती महिलाओं के लिए निःशुल्क प्रसवपूर्व जाँच"],
+["Health","PM Matru Vandana Yojana","Cash benefit for the first child","pmmvy.wcd.gov.in","प्रधानमंत्री मातृ वंदना योजना","पहले बच्चे के लिए नकद लाभ"],
+["Health","Poshan 2.0 / Saksham Anganwadi","Nutrition for children pregnant women and nursing mothers","poshantracker.in","पोषण 2.0 / सक्षम आंगनवाड़ी","बच्चों, गर्भवती और धात्री महिलाओं के लिए पोषण"],
+["Health","PM Bhartiya Jan Aushadhi","Low-cost generic medicines","janaushadhi.gov.in","प्रधानमंत्री भारतीय जन औषधि","कम कीमत की जेनेरिक दवाएँ"],
+["Jobs & Livelihood","VB-G RAM G (replaced MGNREGA from 1 Jul 2026)","125 days of guaranteed wage work per rural household","rural.gov.in","VB-G RAM G (1 जुलाई 2026 से मनरेगा की जगह)","प्रति ग्रामीण परिवार 125 दिन का गारंटीकृत मज़दूरी कार्य"],
+["Jobs & Livelihood","DAY-NRLM (Lakhpati Didi)","Self-help groups credit and livelihood for rural women","aajeevika.gov.in","DAY-NRLM (लखपति दीदी)","ग्रामीण महिलाओं के लिए स्वयं सहायता समूह, ऋण और आजीविका"],
+["Jobs & Livelihood","DDU-GKY","Free job-linked skill training for rural youth","ddugky.gov.in","दीन दयाल उपाध्याय ग्रामीण कौशल्य योजना (DDU-GKY)","ग्रामीण युवाओं के लिए निःशुल्क रोज़गार-आधारित कौशल प्रशिक्षण"],
+["Jobs & Livelihood","PMEGP","Subsidised loans to start micro-enterprises","kviconline.gov.in/pmegpeportal","पीएमईजीपी (PMEGP)","सूक्ष्म उद्यम शुरू करने के लिए अनुदान सहित ऋण"],
+["Jobs & Livelihood","PM Vishwakarma","Toolkit training and credit for artisans","pmvishwakarma.gov.in","पीएम विश्वकर्मा","कारीगरों के लिए टूलकिट, प्रशिक्षण और ऋण"],
+["Jobs & Livelihood","PMKVY / Skill India","Short-term skill courses with certification","skillindiadigital.gov.in","पीएमकेवीवाई / स्किल इंडिया","प्रमाणपत्र सहित अल्पकालिक कौशल पाठ्यक्रम"],
+["Jobs & Livelihood","e-Shram","National database and benefits for unorganised workers","eshram.gov.in","ई-श्रम","असंगठित श्रमिकों के लिए राष्ट्रीय डेटाबेस और लाभ"],
+["Jobs & Livelihood","PM Shram Yogi Maandhan","Pension for unorganised workers","maandhan.in","प्रधानमंत्री श्रम योगी मानधन","असंगठित श्रमिकों के लिए पेंशन"],
+["Jobs & Livelihood","PM Mudra Yojana","Collateral-free small business loans","mudra.org.in","प्रधानमंत्री मुद्रा योजना","बिना गारंटी छोटे कारोबार के लिए ऋण"],
+["Jobs & Livelihood","NSAP","Old-age widow and disability pensions","nsap.nic.in","राष्ट्रीय सामाजिक सहायता कार्यक्रम (NSAP)","वृद्धावस्था, विधवा और दिव्यांग पेंशन"],
+["Jobs & Livelihood","Atal Pension Yojana","Guaranteed pension after 60","jansuraksha.gov.in","अटल पेंशन योजना","60 वर्ष के बाद गारंटीकृत पेंशन"],
+["Jobs & Livelihood","PMJJBY and PMSBY","Low-premium life and accident insurance","jansuraksha.gov.in","पीएमजेजेबीवाई और पीएमएसबीवाई","कम प्रीमियम पर जीवन और दुर्घटना बीमा"],
+["Basic Facilities","PMAY-Gramin","Pucca house for rural homeless and kutcha-house families","pmayg.nic.in","प्रधानमंत्री आवास योजना-ग्रामीण","बेघर और कच्चे मकान वाले ग्रामीण परिवारों के लिए पक्का घर"],
+["Basic Facilities","PMGSY","All-weather roads connecting villages","pmgsy.nic.in","प्रधानमंत्री ग्राम सड़क योजना","गाँवों को जोड़ने वाली सभी मौसम में चलने योग्य सड़कें"],
+["Basic Facilities","Jal Jeevan Mission","Tap water connection to every rural home","jaljeevanmission.gov.in","जल जीवन मिशन","हर ग्रामीण घर में नल से जल कनेक्शन"],
+["Basic Facilities","Swachh Bharat Mission (Gramin)","Toilets and village sanitation","swachhbharatmission.gov.in","स्वच्छ भारत मिशन (ग्रामीण)","शौचालय और गाँव की स्वच्छता"],
+["Basic Facilities","PM Ujjwala Yojana","LPG connection for poor households","pmuy.gov.in","प्रधानमंत्री उज्ज्वला योजना","गरीब परिवारों को एलपीजी कनेक्शन"],
+["Basic Facilities","PM Surya Ghar Muft Bijli","Rooftop solar with subsidy","pmsuryaghar.gov.in","पीएम सूर्य घर मुफ़्त बिजली योजना","सब्सिडी के साथ छत पर सोलर"],
+["Basic Facilities","PM-JANMAN","Housing roads and health for vulnerable tribal groups","tribal.nic.in","पीएम-जनमन","अति संवेदनशील जनजातीय समूहों के लिए आवास, सड़क और स्वास्थ्य"],
+["Basic Facilities","NFSA / PM Garib Kalyan Anna Yojana","Subsidised or free ration","nfsa.gov.in","NFSA / प्रधानमंत्री गरीब कल्याण अन्न योजना","रियायती या मुफ़्त राशन"],
+["Basic Facilities","PM POSHAN","Mid-day meals in schools","pmposhan.education.gov.in","पीएम पोषण","स्कूलों में मध्याह्न भोजन"],
+["Basic Facilities","BharatNet","Broadband for gram panchayats","bbnl.nic.in","भारतनेट","ग्राम पंचायतों के लिए ब्रॉडबैंड"],
+["Basic Facilities","SVAMITVA","Property cards for rural homeowners","svamitva.nic.in","स्वामित्व योजना","ग्रामीण घर मालिकों के लिए प्रॉपर्टी कार्ड"],
+["Basic Facilities","PM Jan Dhan Yojana","Zero-balance bank account with insurance","pmjdy.gov.in","प्रधानमंत्री जन धन योजना","बीमा सहित ज़ीरो-बैलेंस बैंक खाता"],
+["Basic Facilities","National Scholarship Portal","Central scholarships for students","scholarships.gov.in","राष्ट्रीय छात्रवृत्ति पोर्टल","विद्यार्थियों के लिए केंद्रीय छात्रवृत्तियाँ"],
+["Agriculture","PM-KISAN","Rs 6000 a year direct income support","pmkisan.gov.in","पीएम-किसान","सालाना ₹6,000 की सीधी आय सहायता"],
+["Agriculture","PM Fasal Bima Yojana","Crop insurance against weather and pest loss","pmfby.gov.in","प्रधानमंत्री फसल बीमा योजना","मौसम और कीट से फसल नुकसान पर बीमा"],
+["Agriculture","Kisan Credit Card","Cheap short-term farm credit","pmkisan.gov.in (KCC section) or any bank","किसान क्रेडिट कार्ड","सस्ता अल्पकालिक कृषि ऋण"],
+["Agriculture","Soil Health Card","Soil test report with fertiliser advice","soilhealth.dac.gov.in","मृदा स्वास्थ्य कार्ड","उर्वरक सलाह के साथ मिट्टी जाँच रिपोर्ट"],
+["Agriculture","e-NAM","Online mandi trading","enam.gov.in","ई-नाम (e-NAM)","ऑनलाइन मंडी व्यापार"],
+["Agriculture","PM Krishi Sinchayee Yojana","Irrigation and per drop more crop","pmksy.gov.in","प्रधानमंत्री कृषि सिंचाई योजना","सिंचाई और 'प्रति बूँद अधिक फसल'"],
+["Agriculture","PM-KUSUM","Solar pumps and solar power for farmers","pmkusum.mnre.gov.in","पीएम-कुसुम","किसानों के लिए सोलर पंप और सौर ऊर्जा"],
+["Agriculture","Paramparagat Krishi Vikas Yojana","Support for organic farming","pgsindia-ncof.gov.in","परंपरागत कृषि विकास योजना","जैविक खेती के लिए सहायता"],
+["Agriculture","PM Kisan Maandhan Yojana","Pension for small farmers","maandhan.in","प्रधानमंत्री किसान मानधन योजना","छोटे किसानों के लिए पेंशन"],
+["Agriculture","Agriculture Infrastructure Fund","Loans for cold storage and warehouses","agriinfra.dac.gov.in","कृषि अवसंरचना कोष","कोल्ड स्टोरेज और गोदामों के लिए ऋण"],
+["Agriculture","FPO Scheme","Setting up farmer producer organisations","sfacindia.com","एफपीओ योजना","किसान उत्पादक संगठन बनाने में सहायता"],
+["Agriculture","PM Matsya Sampada Yojana","Fisheries support","pmmsy.dof.gov.in","प्रधानमंत्री मत्स्य संपदा योजना","मत्स्य पालन सहायता"],
+["Agriculture","Rashtriya Gokul Mission","Cattle and dairy development","dahd.gov.in","राष्ट्रीय गोकुल मिशन","गोवंश और डेयरी विकास"],
+["Agriculture","PM Formalisation of Micro Food Processing Enterprises","Subsidy for small food-processing units","pmfme.mofpi.gov.in","पीएम सूक्ष्म खाद्य प्रसंस्करण उद्यम औपचारिकीकरण योजना","छोटी खाद्य प्रसंस्करण इकाइयों के लिए सब्सिडी"]
 ];
+
 const CAT_STYLE = {
   "Health": {badge:"bg-red-100 text-red-800", icon:"fa-heart-pulse"},
   "Jobs & Livelihood": {badge:"bg-amber-100 text-amber-800", icon:"fa-briefcase"},
   "Basic Facilities": {badge:"bg-blue-100 text-blue-800", icon:"fa-house-chimney"},
   "Agriculture": {badge:"bg-emerald-100 text-emerald-800", icon:"fa-wheat-awn"}
 };
+const CAT_KEY = {
+  "Health": "cat.health",
+  "Jobs & Livelihood": "cat.jobs",
+  "Basic Facilities": "cat.basic",
+  "Agriculture": "cat.agri"
+};
+
+/* Helpers: pick name/benefit/category in the current language */
+function schemeName(s){ return currentLang === 'hi' && s[4] ? s[4] : s[1]; }
+function schemeBenefit(s){ return currentLang === 'hi' && s[5] ? s[5] : s[2]; }
+function catLabel(c){ return CAT_KEY[c] ? t(CAT_KEY[c]) : c; }
 
 function renderSchemes(){
   const q = document.getElementById('scheme-search').value.toLowerCase().trim();
@@ -65,33 +123,39 @@ function renderSchemes(){
   grid.innerHTML = '';
   let shown = 0;
   SCHEMES.forEach((s, i) => {
-    const [c, name, benefit] = s;
+    const c = s[0];
     if (cat !== 'all' && c !== cat) return;
-    if (q && !(name + ' ' + benefit + ' ' + c).toLowerCase().includes(q)) return;
+    // search in both English and Hindi text
+    const hay = (s[1] + ' ' + s[2] + ' ' + c + ' ' + (s[4] || '') + ' ' + (s[5] || '')).toLowerCase();
+    if (q && !hay.includes(q)) return;
     shown++;
     const st = CAT_STYLE[c];
     const card = document.createElement('div');
     card.className = 'card-element bg-slate-50 p-4 rounded-2xl border border-slate-200 hover:border-emerald-400 flex flex-col';
     card.innerHTML =
       '<div class="flex justify-between items-start mb-2">' +
-        '<span class="' + st.badge + ' text-xs px-2.5 py-1 rounded-full font-bold"><i class="fa-solid ' + st.icon + ' mr-1"></i>' + c + '</span>' +
+        '<span class="' + st.badge + ' text-xs px-2.5 py-1 rounded-full font-bold"><i class="fa-solid ' + st.icon + ' mr-1"></i><span class="cat-label"></span></span>' +
         '<button class="text-slate-400 hover:text-emerald-600" onclick="speakScheme(' + i + ')"><i class="fa-solid fa-volume-high"></i></button>' +
       '</div>' +
       '<h3 class="font-bold text-slate-900 text-base leading-snug"></h3>' +
       '<p class="text-xs text-slate-600 mt-1 mb-4 flex-grow"></p>' +
-      '<button onclick="showScheme(' + i + ')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 rounded-xl text-xs">Details & Apply</button>';
-    card.querySelector('h3').textContent = name;
-    card.querySelector('p').textContent = benefit;
+      '<button onclick="showScheme(' + i + ')" class="details-btn w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 rounded-xl text-xs"></button>';
+    card.querySelector('.cat-label').textContent = catLabel(c);
+    card.querySelector('h3').textContent = schemeName(s);
+    card.querySelector('p').textContent = schemeBenefit(s);
+    card.querySelector('.details-btn').textContent = t('sch.details');
     grid.appendChild(card);
   });
   document.getElementById('no-scheme').classList.toggle('hidden', shown > 0);
-  document.getElementById('scheme-count').textContent = 'Showing ' + shown + ' of ' + SCHEMES.length + ' schemes';
+  document.getElementById('scheme-count').textContent =
+    t('sch.showing').replace('{shown}', shown).replace('{total}', SCHEMES.length);
 }
-function speakScheme(i){ speakText(SCHEMES[i][1] + '. ' + SCHEMES[i][2]); }
+function speakScheme(i){ speakText(schemeName(SCHEMES[i]) + '. ' + schemeBenefit(SCHEMES[i])); }
 function showScheme(i){
-  const [c, name, benefit, site] = SCHEMES[i];
+  const s = SCHEMES[i];
+  const c = s[0], site = s[3];
   const url = 'https://' + site.split(/[\s(]/)[0];
-  openModal(name, 'Benefit: ' + benefit + '\n\nApply / details ke liye official website visit karein. Eligibility aur documents wahan dekh lein.', c, url, site);
+  openModal(schemeName(s), t('modal.benefit') + ' ' + schemeBenefit(s) + '\n\n' + t('modal.note'), c, url, site);
 }
 
 /* ===== UI HELPERS ===== */
@@ -106,29 +170,37 @@ function switchTab(name){
   if(name==='admin') renderAdminUsers();
   window.scrollTo({top:0,behavior:'smooth'});
 }
+function updateToggleLabels(){
+  const bw=document.getElementById('bw-txt');
+  if(bw) bw.textContent=t(document.body.classList.contains('low-bandwidth')?'bw.on':'bw.off');
+  const vt=document.getElementById('voice-txt');
+  if(vt) vt.textContent=t(voiceOn?'voice.on':'voice.off');
+}
 function toggleLowBandwidth(){
-  const on=document.body.classList.toggle('low-bandwidth');
-  document.getElementById('bw-txt').textContent=on?'Low-BW: ON':'Low-BW Mode';
+  document.body.classList.toggle('low-bandwidth');
+  updateToggleLabels();
 }
 function toggleVoiceAssistant(){
   voiceOn=!voiceOn;
-  document.getElementById('voice-txt').textContent=voiceOn?'Voice: ON':'Voice: OFF';
+  updateToggleLabels();
   const bn=document.getElementById('voice-banner');
   bn.classList.toggle('hidden',!voiceOn); bn.classList.toggle('flex',voiceOn);
   if(!voiceOn) stopVoiceAudio();
 }
 function stopVoiceAudio(){ if('speechSynthesis' in window) speechSynthesis.cancel(); }
-function speakText(t){
+function speakText(text){
   if(!voiceOn||!('speechSynthesis' in window)) return;
   stopVoiceAudio();
-  const u=new SpeechSynthesisUtterance(t);
-  u.lang=document.getElementById('lang-select').value==='en'?'en-IN':'hi-IN';
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang=getSpeechLang();
   speechSynthesis.speak(u);
 }
-function changeLanguage(l){ showQuickAlert(l==='en'?'Language: English':'Language set (demo: full translation baaki hai)'); }
+/* kept for compatibility: anything that calls changeLanguage() now uses setLang() */
+function changeLanguage(l){ setLang(l); }
+
 function showQuickAlert(msg){
-  const t=document.getElementById('toast'); t.textContent=msg; t.classList.remove('hidden');
-  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.add('hidden'),2500);
+  const el=document.getElementById('toast'); el.textContent=msg; el.classList.remove('hidden');
+  clearTimeout(el._t); el._t=setTimeout(()=>el.classList.add('hidden'),2500);
 }
 function openModal(title, body, category, url, siteText){
   document.getElementById('modal-title').textContent = title;
@@ -136,14 +208,14 @@ function openModal(title, body, category, url, siteText){
   const badge = document.getElementById('modal-badge');
   const st = CAT_STYLE[category];
   badge.className = 'inline-block text-xs px-2.5 py-1 rounded-full font-bold mb-2 ' + (st ? st.badge : 'hidden');
-  badge.textContent = category || '';
+  badge.textContent = category ? catLabel(category) : '';
   const extra = document.getElementById('modal-extra');
   extra.innerHTML = '';
   if (url) {
     const a = document.createElement('a');
     a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer';
     a.className = 'inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium px-4 py-2 rounded-xl';
-    a.textContent = 'Visit: ' + siteText;
+    a.textContent = t('modal.visit') + ' ' + siteText;
     extra.appendChild(a);
   }
   document.getElementById('info-modal').classList.remove('hidden');
@@ -175,26 +247,26 @@ async function handleRegister(){
   const village=document.getElementById('reg-village').value.trim();
   const pwd=document.getElementById('reg-password').value;
   const confirm=document.getElementById('reg-confirm').value;
-  if(!name||!mobile||!village||!pwd) return showAuthError('Saari fields bharna zaruri hai.');
-  if(!/^[6-9]\d{9}$/.test(mobile)) return showAuthError('Sahi 10-digit mobile number daalein.');
-  if(pwd.length<6) return showAuthError('Password kam se kam 6 characters ka ho.');
-  if(pwd!==confirm) return showAuthError('Dono passwords match nahi kar rahe.');
+  if(!name||!mobile||!village||!pwd) return showAuthError(t('err.required'));
+  if(!/^[6-9]\d{9}$/.test(mobile)) return showAuthError(t('err.mobile'));
+  if(pwd.length<6) return showAuthError(t('err.password'));
+  if(pwd!==confirm) return showAuthError(t('err.mismatch'));
   const users=getUsers();
-  if(users[mobile]) return showAuthError('Is mobile number se account pehle se hai.');
+  if(users[mobile]) return showAuthError(t('err.exists'));
   users[mobile]={name,mobile,village,pwdHash:await hashPwd(pwd)};
   localStorage.setItem(USERS_KEY,JSON.stringify(users));
   localStorage.setItem(SESSION_KEY,mobile);
-  closeAuth(); updateAuthUI(); showQuickAlert('Account ban gaya, swagat hai '+name+'!');
+  closeAuth(); updateAuthUI(); showQuickAlert(t('msg.registered').replace('{name}',name));
 }
 async function handleLogin(){
   const mobile=document.getElementById('login-mobile').value.trim();
   const pwd=document.getElementById('login-password').value;
   const user=getUsers()[mobile];
-  if(!user||user.pwdHash!==await hashPwd(pwd)) return showAuthError('Mobile number ya password galat hai.');
+  if(!user||user.pwdHash!==await hashPwd(pwd)) return showAuthError(t('err.invalid'));
   localStorage.setItem(SESSION_KEY,mobile);
-  closeAuth(); updateAuthUI(); showQuickAlert('Login ho gaya!');
+  closeAuth(); updateAuthUI(); showQuickAlert(t('msg.loggedIn'));
 }
-function logout(){localStorage.removeItem(SESSION_KEY);updateAuthUI();showQuickAlert('Logout ho gaya.');}
+function logout(){localStorage.removeItem(SESSION_KEY);updateAuthUI();showQuickAlert(t('msg.loggedOut'));}
 function updateAuthUI(){
   const mobile=localStorage.getItem(SESSION_KEY);
   const user=mobile?getUsers()[mobile]:null;
@@ -206,11 +278,27 @@ function updateAuthUI(){
 function renderAdminUsers(){
   const tb=document.getElementById('admin-users'); tb.innerHTML='';
   const list=Object.values(getUsers());
-  if(!list.length){tb.innerHTML='<tr><td class="p-3 text-slate-500" colspan="3">Abhi koi user register nahi hua.</td></tr>';return;}
+  if(!list.length){
+    const tr=document.createElement('tr');
+    const td=document.createElement('td');
+    td.className='p-3 text-slate-500'; td.colSpan=3; td.textContent=t('ad.empty');
+    tr.appendChild(td); tb.appendChild(tr);
+    return;
+  }
   list.forEach(u=>{
     const tr=document.createElement('tr'); tr.className='border-b';
     [u.name,u.mobile,u.village].forEach(v=>{const td=document.createElement('td');td.className='p-3';td.textContent=v;tr.appendChild(td);});
     tb.appendChild(tr);
   });
 }
+
+/* Called by lang.js whenever the language changes */
+function onLangChange(){
+  renderSchemes();
+  updateToggleLabels();
+  const adminView=document.getElementById('view-admin');
+  if(adminView && !adminView.classList.contains('hidden')) renderAdminUsers();
+}
+window.onLangChange = onLangChange;
+
 document.addEventListener('DOMContentLoaded',()=>{ renderSchemes(); updateAuthUI(); });
