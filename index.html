@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GramConnect - Digital Platform for Rural Services</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        },
+                        kiet: '#1e3a8a'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        
+        /* Low Bandwidth Mode Adjustments */
+        .low-bandwidth img, .low-bandwidth .bg-decorative { display: none !important; }
+        .low-bandwidth * { box-shadow: none !important; text-shadow: none !important; animation: none !important; transition: none !important; }
+        .low-bandwidth body { background-color: #ffffff !important; color: #000000 !important; }
+        .low-bandwidth .card-element { border: 2px solid #333 !important; background: #fff !important; }
+
+        /* Font Size Accessibility Classes */
+        .text-size-sm { font-size: 0.875rem; }
+        .text-size-base { font-size: 1rem; }
+        .text-size-lg { font-size: 1.125rem; }
+        
+        .tab-btn.active {
+            color: #16a34a;
+            border-bottom: 2px solid #16a34a;
+            background-color: #f0fdf4;
+        }
+
+        /* Pulse highlight for Voice Assistant active state */
+        .voice-active {
+            outline: 3px solid #16a34a;
+            animation: pulse-border 1.5s infinite;
+        }
+        @keyframes pulse-border {
+            0% { outline-color: rgba(22, 163, 74, 1); }
+            50% { outline-color: rgba(22, 163, 74, 0.3); }
+            100% { outline-color: rgba(22, 163, 74, 1); }
+        }
+    </style>
+</head>
+<body id="app-body" class="bg-slate-50 text-slate-800 flex flex-col min-h-screen transition-all duration-200">
+
+    <!-- TOP ACCESSIBILITY & INNOTECH BAR -->
+    <div class="bg-slate-900 text-white text-xs py-2 px-4 flex flex-wrap justify-between items-center gap-2 border-b border-slate-800">
+        <div class="flex items-center space-x-3">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-emerald-500 text-slate-950">
+                <i class="fa-solid fa-graduation-cap mr-1"></i> KIET InnoTech26 Submission
+            </span>
+            <span class="hidden sm:inline text-slate-300">
+                Team ID: <strong class="text-white">IT26-0392</strong> | Dept: <strong class="text-white">CSE</strong>
+            </span>
+        </div>
+        
+        <div class="flex items-center space-x-2 sm:space-x-4">
+            <!-- Text Size Controls -->
+            <div class="flex items-center space-x-1 bg-slate-800 rounded px-2 py-0.5 border border-slate-700">
+                <span class="text-[10px] text-slate-400 mr-1">Text:</span>
+                <button onclick="setFontSize('sm')" class="hover:text-emerald-400 font-bold px-1">A-</button>
+                <button onclick="setFontSize('base')" class="hover:text-emerald-400 font-bold px-1">A</button>
+                <button onclick="setFontSize('lg')" class="hover:text-emerald-400 font-bold px-1">A+</button>
+            </div>
+
+            <!-- Voice Assistant Mode -->
+            <button onclick="toggleVoiceAssistant()" id="voice-toggle-btn" class="hover:text-emerald-400 flex items-center gap-1 px-2 py-0.5 bg-slate-800 rounded border border-slate-700 transition">
+                <i class="fa-solid fa-volume-high text-emerald-400"></i>
+                <span id="voice-txt" class="hidden sm:inline">Voice: OFF</span>
+            </button>
+            
+            <!-- Low Bandwidth Mode Toggle -->
+            <button onclick="toggleLowBandwidth()" id="bw-toggle-btn" class="hover:text-amber-400 flex items-center gap-1 px-2 py-0.5 bg-slate-800 rounded border border-slate-700 transition">
+                <i class="fa-solid fa-bolt text-amber-400"></i>
+                <span id="bw-txt" class="hidden sm:inline">Low-BW Mode</span>
+            </button>
+
+            <!-- Language Selector -->
+            <select id="lang-select" onchange="changeLanguage(this.value)" class="bg-slate-800 border border-slate-700 text-white rounded px-2 py-0.5 focus:outline-none focus:border-emerald-500">
+                <option value="en">English</option>
+                <option value="hi">हिन्दी (Hindi)</option>
+                <option value="reg">Regional (Bhojpuri/Maithili)</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- MAIN HEADER NAVIGATION -->
+    <header class="bg-white shadow-sm sticky top-0 z-40 border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                
+                <!-- Logo & Branding -->
+                <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('home')">
+                    <div class="bg-emerald-600 text-white p-2.5 rounded-xl shadow-sm flex items-center justify-center">
+                        <i class="fa-solid fa-wheat-awn text-xl"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="font-extrabold text-xl text-slate-900 tracking-tight">Gram<span class="text-emerald-600">Connect</span></span>
+                            <span class="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">V1.0</span>
+                        </div>
+                        <p class="text-[11px] text-slate-500 hidden sm:block">Digital Platform for Rural Services & Livelihoods</p>
+                    </div>
+                </div>
+
+                <!-- Desktop Navigation Tabs -->
+                <nav class="hidden md:flex space-x-1 font-medium text-sm">
+                    <button onclick="switchTab('home')" id="tab-btn-home" class="tab-btn active px-3 py-2 rounded-lg text-slate-700 hover:text-emerald-600 transition flex items-center gap-1.5"><i class="fa-solid fa-house"></i> Home</button>
+                    <button onclick="switchTab('schemes')" id="tab-btn-schemes" class="tab-btn px-3 py-2 rounded-lg text-slate-700 hover:text-emerald-600 transition flex items-center gap-1.5"><i class="fa-solid fa-file-invoice"></i> Schemes</button>
+                    <button onclick="switchTab('agriculture')" id="tab-btn-agriculture" class="tab-btn px-3 py-2 rounded-lg text-slate-700 hover:text-emerald-600 transition flex items-center gap-1.5"><i class="fa-solid fa-seedling"></i> Krishi</button>
+                    <button onclick="switchTab('health')" id="tab-btn-health" class="tab-btn px-3 py-2 rounded-lg text-slate-700 hover:text-emerald-600 transition flex items-center gap-1.5"><i class="fa-solid fa-hospital"></i> Healthcare</button>
+                    <button onclick="switchTab('jobs')" id="tab-btn-jobs" class="tab-btn px-3 py-2 rounded-lg text-slate-700 hover:text-emerald-600 transition flex items-center gap-1.5"><i class="fa-solid fa-briefcase"></i> Jobs & Skills</button>
+                    <button onclick="switchTab('team')" id="tab-btn-team" class="tab-btn px-3 py-2 rounded-lg text-slate-700 hover:text-emerald-600 transition flex items-center gap-1.5 text-blue-700 font-semibold"><i class="fa-solid fa-graduation-cap"></i> Team & Info</button>
+                </nav>
+
+                <!-- Volunteer / Admin Portal Button -->
+                <div class="flex items-center gap-2">
+                    <button onclick="switchTab('admin')" id="tab-btn-admin" class="bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm px-3.5 py-2 rounded-xl font-medium transition flex items-center gap-2 shadow-sm">
+                        <i class="fa-solid fa-user-shield text-emerald-400"></i>
+                        <span class="hidden sm:inline">Admin / Volunteer Portal</span>
+                        <span class="sm:hidden">Admin</span>
+                    </button>
+
+                    <!-- Mobile Menu Trigger -->
+                    <button onclick="toggleMobileNav()" class="md:hidden text-slate-700 p-2 focus:outline-none">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div id="mobile-nav" class="hidden md:hidden bg-white border-t border-slate-200 px-4 py-3 space-y-2">
+            <button onclick="switchTab('home'); toggleMobileNav()" class="w-full text-left px-3 py-2 rounded-lg text-slate-800 hover:bg-emerald-50"><i class="fa-solid fa-house mr-2 text-emerald-600"></i>Home</button>
+            <button onclick="switchTab('schemes'); toggleMobileNav()" class="w-full text-left px-3 py-2 rounded-lg text-slate-800 hover:bg-emerald-50"><i class="fa-solid fa-file-invoice mr-2 text-emerald-600"></i>Government Schemes</button>
+            <button onclick="switchTab('agriculture'); toggleMobileNav()" class="w-full text-left px-3 py-2 rounded-lg text-slate-800 hover:bg-emerald-50"><i class="fa-solid fa-seedling mr-2 text-emerald-600"></i>Krishi & Mandi</button>
+            <button onclick="switchTab('health'); toggleMobileNav()" class="w-full text-left px-3 py-2 rounded-lg text-slate-800 hover:bg-emerald-50"><i class="fa-solid fa-hospital mr-2 text-emerald-600"></i>Healthcare Facilities</button>
+            <button onclick="switchTab('jobs'); toggleMobileNav()" class="w-full text-left px-3 py-2 rounded-lg text-slate-800 hover:bg-emerald-50"><i class="fa-solid fa-briefcase mr-2 text-emerald-600"></i>Jobs & Vocational Skills</button>
+            <button onclick="switchTab('admin'); toggleMobileNav()" class="w-full text-left px-3 py-2 rounded-lg text-slate-800 hover:bg-emerald-50"><i class="fa-solid fa-user-shield mr-2 text-emerald-600"></i>Admin & Volunteer Dashboard</button>
+            <button onclick="switchTab('team'); toggleMobileNav()" class="w-full text-left px-3 py-2 rounded-lg text-blue-800 font-semibold bg-blue-50"><i class="fa-solid fa-graduation-cap mr-2"></i>InnoTech26 Submission Info</button>
+        </div>
+    </header>
+
+    <!-- VOICE ASSISTANT NOTIFICATION BANNER -->
+    <div id="voice-banner" class="hidden bg-emerald-700 text-white px-4 py-2 text-xs sm:text-sm flex items-center justify-between shadow-inner">
+        <div class="flex items-center gap-2">
+            <i class="fa-solid fa-volume-high text-yellow-300 animate-bounce"></i>
+            <span><strong>Voice Assistant Active:</strong> Hover or click any section/card title to hear audio guidance in your language.</span>
+        </div>
+        <button onclick="stopVoiceAudio()" class="underline text-xs hover:text-emerald-200">Stop Audio</button>
+    </div>
+
+    <!-- MAIN DYNAMIC CONTENT CONTAINER -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- ================= 1. HOME TAB ================= -->
+        <section id="view-home" class="view-content space-y-8">
+            <!-- Hero Banner -->
+            <div class="relative bg-gradient-to-r from-emerald-900 via-emerald-800 to-teal-900 text-white rounded-3xl p-6 sm:p-10 shadow-lg overflow-hidden">
+                <div class="relative z-10 max-w-3xl">
+                    <span class="inline-flex items-center gap-1.5 bg-emerald-500/30 text-emerald-200 text-xs px-3 py-1 rounded-full font-semibold mb-3 border border-emerald-400/30">
+                        <i class="fa-solid fa-sparkles"></i> Single Window Digital Rural Platform
+                    </span>
+                    <h1 class="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight mb-4 leading-tight" onclick="speakText('GramConnect: Empowering Rural Citizens with Digital Access')">
+                        GramConnect: Empowering Rural Citizens with Digital Access
+                    </h1>
+                    <p class="text-emerald-100 text-sm sm:text-base mb-6 leading-relaxed">
+                        Bridging the information gap by offering government welfare schemes, agricultural market guidance, healthcare connections, and rural jobs through a simplified, accessible, and low-bandwidth interface.
+                    </p>
+                    
+                    <div class="flex flex-wrap gap-3">
+                        <button onclick="switchTab('schemes')" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold px-5 py-2.5 rounded-xl transition shadow-md flex items-center gap-2 text-sm">
+                            <i class="fa-solid fa-magnifying-glass"></i> Explore Government Schemes
+                        </button>
+                        <button onclick="switchTab('agriculture')" class="bg-white/10 hover:bg-white/20 text-white font-medium px-4 py-2.5 rounded-xl border border-white/20 transition flex items-center gap-2 text-sm">
+                            <i class="fa-solid fa-wheat-awn"></i> View Mandi Rates
+                        </button>
+                        <button onclick="speakText('Welcome to GramConnect. A single platform for government schemes, crop guidance, hospital access, and local employment.')" class="bg-slate-900/60 hover:bg-slate-900 text-emerald-300 font-medium px-4 py-2.5 rounded-xl border border-slate-700 transition flex items-center gap-2 text-sm">
+                            <i class="fa-solid fa-volume-high"></i> Play Audio Overview
+                        </button>
+                    </div>
+                </div>
+                <!-- Decorative Icon Background -->
+                <div class="bg-decorative absolute -right-10 -bottom-10 opacity-10 pointer-events-none">
+                    <i class="fa-solid fa-wheat-awn text-[280px] text-white"></i>
+                </div>
+            </div>
+
+            <!-- Quick Access Core Services Grid -->
+            <div>
+                <div class="flex justify-between items-end mb-4">
+                    <div>
+                        <h2 class="text-xl sm:text-2xl font-bold text-slate-900" onclick="speakText('GramConnect Core Modules')">GramConnect Core Modules</h2>
+                        <p class="text-xs sm:text-sm text-slate-500">Tap on any module to access services instantly</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                    <!-- Card 1: Sarkari Yojana -->
+                    <div onclick="switchTab('schemes')" class="card-element bg-white p-5 rounded-2xl border border-slate-200 hover:border-emerald-500 hover:shadow-md transition cursor-pointer group">
+                        <div class="w-12 h-12 bg-blue-100 text-blue-700 rounded-xl flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-landmark"></i>
+                        </div>
+                        <h3 class="font-bold text-slate-900 text-base mb-1 group-hover:text-emerald-600" onclick="speakText('Government Schemes')">Sarkari Yojana</h3>
+                        <p class="text-xs text-slate-500 mb-3">PM-Kisan, Housing Scheme, Ration Cards & Pension verification.</p>
+                        <span class="text-xs font-semibold text-blue-600 flex items-center gap-1">Browse Schemes <i class="fa-solid fa-arrow-right text-[10px]"></i></span>
+                    </div>
+
+                    <!-- Card 2: Krishi Guidance -->
+                    <div onclick="switchTab('agriculture')" class="card-element bg-white p-5 rounded-2xl border border-slate-200 hover:border-emerald-500 hover:shadow-md transition cursor-pointer group">
+                        <div class="w-12 h-12 bg-emerald-100 text-emerald-700 rounded-xl flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-wheat-field"></i>
+                        </div>
+                        <h3 class="font-bold text-slate-900 text-base mb-1 group-hover:text-emerald-600" onclick="speakText('Krishi and Mandi Guidance')">Krishi & Mandi Rates</h3>
+                        <p class="text-xs text-slate-500 mb-3">Today's crop prices, weather advisory & organic best practices.</p>
+                        <span class="text-xs font-semibold text-emerald-600 flex items-center gap-1">View Mandi Data <i class="fa-solid fa-arrow-right text-[10px]"></i></span>
+                    </div>
+
+                    <!-- Card 3: Healthcare -->
+                    <div onclick="switchTab('health')" class="card-element bg-white p-5 rounded-2xl border border-slate-200 hover:border-emerald-500 hover:shadow-md transition cursor-pointer group">
+                        <div class="w-12 h-12 bg-red-100 text-red-700 rounded-xl flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-user-doctor"></i>
+                        </div>
+                        <h3 class="font-bold text-slate-900 text-base mb-1 group-hover:text-emerald-600" onclick="speakText('Swasthya Seva Healthcare')">Swasthya Seva</h3>
+                        <p class="text-xs text-slate-500 mb-3">Nearby Primary Health Centers, tele-consultation & ambulances.</p>
+                        <span class="text-xs font-semibold text-red-600 flex items-center gap-1">Find Doctors <i class="fa-solid fa-arrow-right text-[10px]"></i></span>
+                    </div>
+
+                    <!-- Card 4: Jobs & Skill -->
+                    <div onclick="switchTab('jobs')" class="card-element bg-white p-5 rounded-2xl border border-slate-200 hover:border-emerald-500 hover:shadow-md transition cursor-pointer group">
+                        <div class="w-12 h-12 bg-amber-100 text-amber-800 rounded-xl flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-hand-holding-hand"></i>
+                        </div>
+                        <h3 class="font-bold text-slate-900 text-base mb-1 group-hover:text-emerald-600" onclick="speakText('Rojgar and Skill Hub')">Rojgar & Skill Hub</h3>
+                        <p class="text-xs text-slate-500 mb-3">MGNREGA work days, village crafts & self-help group opportunities.</p>
+                        <span class="text-xs font-semibold text-amber-700 flex items-center gap-1">Explore Jobs <i class="fa-solid fa-arrow-right text-[10px]"></i></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Announcements & Emergency Contact Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Announcements Board -->
+                <div class="lg:col-span-2 card-element bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                    <div class="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
+                        <h3 class="font-bold text-slate-900 text-lg flex items-center gap-2">
+                            <i class="fa-solid fa-bullhorn text-emerald-600"></i> Gram Panchayat Notice Board
+                        </h3>
+                        <span class="text-xs text-slate-400">Live Sync</span>
+                    </div>
+                    
+                    <div class="space-y-3" id="notice-board-container">
+                        <div class="p-3.5 bg-emerald-50 rounded-xl border border-emerald-100 flex items-start gap-3">
+                            <i class="fa-solid fa-syringe text-emerald-600 text-lg mt-0.5"></i>
+                            <div>
+                                <h4 class="font-semibold text-slate-900 text-sm">Free Livestock Vaccination Camp</h4>
+                                <p class="text-xs text-slate-600 mt-0.5">Veterinary doctor visiting Primary Health Center this Saturday from 9:00 AM to 2:00 PM.</p>
+                            </div>
+                        </div>
+
+                        <div class="p-3.5 bg-blue-50 rounded-xl border border-blue-100 flex items-start gap-3">
+                            <i class="fa-solid fa-id-card text-blue-600 text-lg mt-0.5"></i>
+                            <div>
+                                <h4 class="font-semibold text-slate-900 text-sm">PM Kisan e-KYC Drive at CSC Center</h4>
+                                <p class="text-xs text-slate-600 mt-0.5">Farmers are requested to complete fingerprint verification at nearest CSC center before end of month.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Emergency Helpline Box -->
+                <div class="card-element bg-gradient-to-br from-slate-900 to-slate-800 text-white p-6 rounded-2xl shadow-sm flex flex-col justify-between">
+                    <div>
+                        <h3 class="font-bold text-lg mb-1 flex items-center gap-2">
+                            <i class="fa-solid fa-phone-volume text-red-400"></i> Emergency Helplines
+                        </h3>
+                        <p class="text-xs text-slate-300 mb-4">Click to call regional services instantly</p>
+                        
+                        <div class="space-y-2">
+                            <a href="tel:108" class="flex justify-between items-center bg-slate-800/80 hover:bg-slate-700 p-2.5 rounded-xl border border-slate-700 text-xs font-semibold transition">
+                                <span><i class="fa-solid fa-truck-medical text-red-400 mr-2"></i>Medical Emergency</span>
+                                <span class="text-red-400 font-mono">108</span>
+                            </a>
+                            <a href="tel:18001801551" class="flex justify-between items-center bg-slate-800/80 hover:bg-slate-700 p-2.5 rounded-xl border border-slate-700 text-xs font-semibold transition">
+                                <span><i class="fa-solid fa-tractor text-emerald-400 mr-2"></i>Kisan Call Center</span>
+                                <span class="text-emerald-400 font-mono">1800-180-1551</span>
+                            </a>
+                            <a href="tel:1091" class="flex justify-between items-center bg-slate-800/80 hover:bg-slate-700 p-2.5 rounded-xl border border-slate-700 text-xs font-semibold transition">
+                                <span><i class="fa-solid fa-shield-halved text-purple-400 mr-2"></i>Women Helpline</span>
+                                <span class="text-purple-400 font-mono">1091</span>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <button onclick="showQuickAlert('Connecting to Gram Mitra Volunteer Helpline...')" class="mt-4 w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 text-xs rounded-xl transition flex items-center justify-center gap-1 shadow">
+                        <i class="fa-solid fa-headset"></i> Contact Local Gram Mitra
+                    </button>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ================= 2. GOVERNMENT SCHEMES TAB ================= -->
+        <section id="view-schemes" class="view-content space-y-6 hidden">
+            <div class="card-element bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-900" onclick="speakText('Government Welfare Schemes Portal')">Government Schemes & Eligibility</h2>
+                        <p class="text-sm text-slate-500">Filter schemes by category and check step-by-step application requirements</p>
+                    </div>
+
+                    <!-- Search and Filters -->
+                    <div class="flex flex-wrap items-center gap-2">
+                        <input type="text" id="scheme-search" onkeyup="filterSchemes()" placeholder="Search scheme..." class="bg-slate-50 border border-slate-300 text-sm rounded-xl px-3 py-2 focus:outline-none focus:border-emerald-500 w-full sm:w-48">
+                        <select id="scheme-category" onchange="filterSchemes()" class="bg-slate-50 border border-slate-300 text-sm rounded-xl px-3 py-2 focus:outline-none focus:border-emerald-500">
+                            <option value="all">All Categories</option>
+                            <option value="farmer">Farmers & Agriculture</option>
+                            <option value="housing">Housing & Welfare</option>
+                            <option value="women">Women & LPG</option>
+                            <option value="pension">Pensions & Seniors</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Grid of Schemes -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="schemes-grid">
+                    
+                    <!-- Scheme 1 -->
+                    <div class="scheme-item card-element bg-slate-50 p-5 rounded-2xl border border-slate-200 hover:border-emerald-400 transition" data-category="farmer">
+                        <div class="flex items-start justify-between">
+                            <span class="bg-emerald-100 text-emerald-800 text-xs px-2.5 py-1 rounded-full font-bold">Agriculture</span>
+                            <button onclick="speakText('PM Kisan Samman Nidhi. Provides 6,000 rupees yearly in three equal installments.')" class="text-slate-400 hover:text-emerald-600"><i class="fa-solid fa-volume-high"></i></button>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-900 mt-2">PM-Kisan Samman Nidhi</h3>
+                        <p class="text-xs text-slate-600 mt-1 mb-3">Direct income support of ₹6,000/year in 3 installments for eligible landholding farmer families.</p>
+                        
+                        <div class="space-y-1.5 text-xs text-slate-700 bg-white p-3 rounded-xl border border-slate-200 mb-4">
+                            <div><strong class="text-slate-900">Eligibility:</strong> Landholding farmers with Aadhaar linked bank account.</div>
+                            <div><strong class="text-slate-900">Documents:</strong> Khasra/Khatauni, Aadhaar, Bank Passbook.</div>
+                        </div>
+
+                        <button onclick="openModal('PM-Kisan Samman Nidhi', 'Apply at nearest CSC or PM-Kisan Portal.\n1. Aadhaar verification\n2. Land ownership record submission\n3. Bank details submission')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 rounded-xl text-xs transition">View Step-by-Step Guide</button>
+                    </div>
+
+                    <!-- Scheme 2 -->
+                    <div class="scheme-item card-element bg-slate-50 p-5 rounded-2xl border border-slate-200 hover:border-emerald-400 transition" data-category="housing">
+                        <div class="flex items-start justify-between">
+                            <span class="bg-blue-100 text-blue-800 text-xs px-2.5 py-1 rounded-full font-bold">Housing</span>
+                            <button onclick="speakText('PM Awas Yojana Gramin. Financial assistance of 1.20 Lakh rupees for house construction.')" class="text-slate-400 hover:text-emerald-600"><i class="fa-solid fa-volume-high"></i></button>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-900 mt-2">Pradhan Mantri Awas Yojana (Gramin)</h3>
+                        <p class="text-xs text-slate-600 mt-1 mb-3">Financial assistance of ₹1.20 Lakh for construction of permanent housing for homeless families.</p>
+                        
+                        <div class="space-y-1.5 text-xs text-slate-700 bg-white p-3 rounded-xl border border-slate-200 mb-4">
+                            <div><strong class="text-slate-900">Eligibility:</strong> Households listed in SECC 2011 without permanent dwelling.</div>
+                            <div><strong class="text-slate-900">Documents:</strong> Job card, MGNREGA ID, Aadhaar card.</div>
+                        </div>
+
+                        <button onclick="openModal('PM Awas Yojana Gramin', 'Processed through Gram Sabha selection.\n1. Submit name to Panchayat Secretary\n2. Geo-tagging of current plot\n3. Direct bank transfer on approval')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 rounded-xl text-xs transition">View Step-by-Step Guide</button>
+                    </div>
+
+                    <!-- Scheme 3 -->
+                    <div class="scheme-item card-element bg-slate-50 p-5 rounded-2xl border border-slate-200 hover:border-emerald-400 transition" data-category="women">
+                        <div class="flex items-start justify-between">
+                            <span class="bg-pink-100 text-pink-800 text-xs px-2.5 py-1 rounded-full font-bold">Women & Clean Energy</span>
+                            <button onclick="speakText('PM Ujjwala Yojana. Free LPG gas connection for rural women.')" class="text-slate-400 hover:text-emerald-600"><i class="fa-solid fa-volume-high"></i></button>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-900 mt-2">PM Ujjwala Yojana 2.0</h3>
+                        <p class="text-xs text-slate-600 mt-1 mb-3">Deposit-free LPG connection along with first cylinder refill and stove free for adult women in BPL households.</p>
+                        
+                        <div class="space-y-1.5 text-xs text-slate-700 bg-white p-3 rounded-xl border border-slate-200 mb-4">
+                            <div><strong class="text-slate-900">Eligibility:</strong> Adult female member of BPL household.</div>
+                            <div><strong class="text-slate-900">Documents:</strong> BPL Ration Card, Aadhaar, Bank Details.</div>
+                        </div>
+
+                        <button onclick="openModal('PM Ujjwala Yojana 2.0', 'Submit physical form to LPG distributor or Gram Mitra.\n1. Identity proof verification\n2. Ration card check\n3. Free cylinder delivery')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 rounded-xl text-xs transition">View Step-by-Step Guide</button>
+                    </div>
+
+                    <!-- Scheme 4 -->
+                    <div class="scheme-item card-element bg-slate-50 p-5 rounded-2xl border border-slate-200 hover:border-emerald-400 transition" data-category="pension">
+                        <div class="flex items-start justify-between">
+                            <span class="bg-purple-100 text-purple-800 text-xs px-2.5 py-1 rounded-full font-bold">Pensions</span>
+                            <button onclick="speakText('Indira Gandhi National Old Age Pension Scheme.')" class="text-slate-400 hover:text-emerald-600"><i class="fa-solid fa-volume-high"></i></button>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-900 mt-2">National Old Age Pension Scheme</h3>
+                        <p class="text-xs text-slate-600 mt-1 mb-3">Monthly financial pension directly transferred to elderly citizens above 60 years belonging to BPL list.</p>
+                        
+                        <div class="space-y-1.5 text-xs text-slate-700 bg-white p-3 rounded-xl border border-slate-200 mb-4">
+                            <div><strong class="text-slate-900">Eligibility:</strong> Citizens aged 60+ years certified under BPL.</div>
+                            <div><strong class="text-slate-900">Documents:</strong> Age Certificate, BPL Card, Aadhaar.</div>
+                        </div>
+
+                        <button onclick="openModal('National Old Age Pension', 'Applications verified by Panchayat and Block Development Office (BDO).\n1. Form submission at BDO\n2. Gram Sabha endorsement\n3. Monthly pension auto-credit')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 rounded-xl text-xs transition">View Step-by-Step Guide</button>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ================= 3. AGRICULTURAL GUIDANCE TAB ================= -->
+        <section id="view-agriculture" class="view-content space-y-6 hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                <!-- Weather & Crop Weather Box -->
+                <div class="card-element bg-gradient-to-br from-emerald-800 to-teal-900 text-white p-6 rounded-2xl shadow-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-bold text-lg"><i class="fa-solid fa-cloud-sun-rain text-amber-300 mr-2"></i> Weather & Advisory</h3>
+                        <span class="text-xs bg-emerald-700 px-2 py-0.5 rounded text-emerald-100">Local Area</span>
+                    </div>
+
+                    <div class="bg-white/10 backdrop-blur-md p-4 rounded-xl text-center mb-4">
+                        <div class="text-3xl font-extrabold mb-1">27°C / Clear</div>
+                        <p class="text-xs text-emerald-100">Humidity: 58% | Wind: 8 km/h</p>
+                        <p class="text-xs text-amber-300 font-semibold mt-2"><i class="fa-solid fa-lightbulb"></i> Ideal weather for wheat field weeding and bio-fertilizer application.</p>
+                    </div>
+
+                    <h4 class="font-bold text-sm mb-2 border-b border-emerald-700 pb-1">Seasonal Farming Advisory</h4>
+                    <ul class="text-xs space-y-2 text-emerald-100">
+                        <li><i class="fa-solid fa-check text-emerald-400 mr-1"></i> <strong>Soil Testing:</strong> Collect soil samples for free KVK testing.</li>
+                        <li><i class="fa-solid fa-check text-emerald-400 mr-1"></i> <strong>Pest Management:</strong> Use Neem oil spray for natural organic protection.</li>
+                    </ul>
+                </div>
+
+                <!-- Mandi Rates Table -->
+                <div class="lg:col-span-2 card-element bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+                        <div>
+                            <h3 class="font-bold text-slate-900 text-lg flex items-center gap-2">
+                                <i class="fa-solid fa-chart-line text-emerald-600"></i> Daily Mandi Commodity Rates (MSP)
+                            </h3>
+                            <p class="text-xs text-slate-500">Live prices from nearest Agricultural Produce Market Committee (APMC)</p>
+                        </div>
+                        <button onclick="refreshMandiData()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-3 py-1.5 rounded-lg border border-slate-300 transition flex items-center gap-1">
+                            <i class="fa-solid fa-rotate"></i> Refresh
+                        </button>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100 text-slate-700 border-b border-slate-200">
+                                    <th class="p-3 font-semibold">Crop Name</th>
+                                    <th class="p-3 font-semibold">Variety</th>
+                                    <th class="p-3 font-semibold">Min Price (₹/Qtl)</th>
+                                    <th class="p-3 font-semibold">Max Price (₹/Qtl)</th>
+                                    <th class="p-3 font-semibold">Trend</th>
+                                </tr>
+                            </thead>
+                            <tbody id="mandi-table-body" class="divide-y divide-slate-100">
+                                <tr>
+                                    <td class="p-3 font-bold text-slate-900">Wheat (गेहूँ)</td>
+                                    <td class="p-3 text-slate-600">Sharbati / Desi</td>
+                                    <td class="p-3">₹2,275</td>
+                                    <td class="p-3 font-bold text-emerald-700">₹2,450</td>
+                                    <td class="p-3 text-emerald-600"><i class="fa-solid fa-arrow-trend-up"></i> +₹30</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 font-bold text-slate-900">Paddy (धान)</td>
+                                    <td class="p-3 text-slate-600">Basmati 1509</td>
+                                    <td class="p-3">₹3,100</td>
+                                    <td class="p-3 font-bold text-emerald-700">₹3,550</td>
+                                    <td class="p-3 text-emerald-600"><i class="fa-solid fa-arrow-trend-up"></i> +₹50</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 font-bold text-slate-900">Mustard (सरसों)</td>
+                                    <td class="p-3 text-slate-600">Yellow / Black</td>
+                                    <td class="p-3">₹5,200</td>
+                                    <td class="p-3 font-bold text-emerald-700">₹5,650</td>
+                                    <td class="p-3 text-red-500"><i class="fa-solid fa-arrow-trend-down"></i> -₹10</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 font-bold text-slate-900">Sugarcane (गन्ना)</td>
+                                    <td class="p-3 text-slate-600">Early Gen</td>
+                                    <td class="p-3">₹360</td>
+                                    <td class="p-3 font-bold text-emerald-700">₹370</td>
+                                    <td class="p-3 text-slate-500">Stable</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ================= 4. HEALTHCARE FINDER TAB ================= -->
+        <section id="view-health" class="view-content space-y-6 hidden">
+            <div class="card-element bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-900" onclick="speakText('Healthcare Facilities and Hospitals')">Nearby Healthcare & Doctors</h2>
+                        <p class="text-sm text-slate-500">Find Primary Health Centers (PHC), Community Health Centers, and Tele-consultation</p>
+                    </div>
+
+                    <button onclick="showQuickAlert('Connecting to e-Sanjeevani Rural Telemedicine Portal...')" class="bg-red-600 hover:bg-red-700 text-white font-medium px-4 py-2 rounded-xl text-xs transition flex items-center gap-2 shadow">
+                        <i class="fa-solid fa-headset"></i> Start Doctor Tele-Consultation
+                    </button>
+                </div>
+
+                <!-- Healthcare List -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                    
+                    <div class="card-element bg-slate-50 p-5 rounded-2xl border border-slate-200">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="bg-red-100 text-red-800 text-xs px-2.5 py-0.5 rounded-full font-bold">Government PHC</span>
+                            <span class="text-xs font-semibold text-emerald-600"><i class="fa-solid fa-location-dot mr-1"></i>2.5 km</span>
+                        </div>
+                        <h3 class="font-bold text-slate-900 text-base">Primary Health Center (PHC)</h3>
+                        <p class="text-xs text-slate-500 mb-3">Muradnagar Main Block, Near Railway Crossing</p>
+                        
+                        <div class="space-y-1 text-xs text-slate-700 mb-4 bg-white p-2.5 rounded-lg border border-slate-200">
+                            <div><i class="fa-solid fa-user-doctor text-emerald-600 mr-1.5"></i> <strong>Doctor on Duty:</strong> Dr. R. K. Sharma</div>
+                            <div><i class="fa-solid fa-clock text-blue-600 mr-1.5"></i> <strong>Hours:</strong> 8:00 AM - 4:00 PM</div>
+                            <div><i class="fa-solid fa-capsules text-purple-600 mr-1.5"></i> <strong>Services:</strong> Free medicines, Vaccination, OPD</div>
+                        </div>
+
+                        <a href="tel:0123456789" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-2 rounded-xl text-xs transition block text-center">
+                            <i class="fa-solid fa-phone mr-1"></i> Call Health Center
+                        </a>
+                    </div>
+
+                    <div class="card-element bg-slate-50 p-5 rounded-2xl border border-slate-200">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="bg-blue-100 text-blue-800 text-xs px-2.5 py-0.5 rounded-full font-bold">Community Hospital</span>
+                            <span class="text-xs font-semibold text-emerald-600"><i class="fa-solid fa-location-dot mr-1"></i>6.0 km</span>
+                        </div>
+                        <h3 class="font-bold text-slate-900 text-base">Community Health Center (CHC)</h3>
+                        <p class="text-xs text-slate-500 mb-3">Ghaziabad Road Sector-4</p>
+                        
+                        <div class="space-y-1 text-xs text-slate-700 mb-4 bg-white p-2.5 rounded-lg border border-slate-200">
+                            <div><i class="fa-solid fa-user-doctor text-emerald-600 mr-1.5"></i> <strong>Facilities:</strong> 24/7 Emergency, Delivery Ward</div>
+                            <div><i class="fa-solid fa-truck-medical text-red-600 mr-1.5"></i> <strong>Ambulance:</strong> 2 Available</div>
+                            <div><i class="fa-solid fa-vial text-amber-600 mr-1.5"></i> <strong>Labs:</strong> Free Blood Testing</div>
+                        </div>
+
+                        <a href="tel:108" class="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-2 rounded-xl text-xs transition block text-center">
+                            <i class="fa-solid fa-truck-medical mr-1"></i> Call Emergency 108
+                        </a>
+                    </div>
+
+                    <div class="card-element bg-slate-50 p-5 rounded-2xl border border-slate-200">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="bg-amber-100 text-amber-800 text-xs px-2.5 py-0.5 rounded-full font-bold">Maternal & Child Care</span>
+                            <span class="text-xs font-semibold text-emerald-600"><i class="fa-solid fa-location-dot mr-1"></i>1.8 km</span>
+                        </div>
+                        <h3 class="font-bold text-slate-900 text-base">Sub-Center & ASHA Worker Hub</h3>
+                        <p class="text-xs text-slate-500 mb-3">Panchayat Bhavan Sub-Center</p>
+                        
+                        <div class="space-y-1 text-xs text-slate-700 mb-4 bg-white p-2.5 rounded-lg border border-slate-200">
+                            <div><i class="fa-solid fa-user-nurse text-emerald-600 mr-1.5"></i> <strong>ASHA Lead:</strong> Sunita Devi</div>
+                            <div><i class="fa-solid fa-baby text-pink-600 mr-1.5"></i> <strong>Focus:</strong> Immunization & Child Nutrition</div>
+                            <div><i class="fa-solid fa-calendar-check text-blue-600 mr-1.5"></i> <strong>Weekly Visit:</strong> Wednesdays</div>
+                        </div>
+
+                        <button onclick="showQuickAlert('Contacting local ASHA Worker Sunita Devi...')" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-2 rounded-xl text-xs transition">
+                            <i class="fa-solid fa-message mr-1"></i> Contact ASHA Worker
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ================= 5. LOCAL JOBS & SKILLS HUB ================= -->
+        <section id="view-jobs" class="view-content space-y-6 hidden">
+            <div class="card-element bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-900" onclick="speakText('Local Employment and Skill Training Hub')">Local Employment & Vocational Skills</h2>
+                        <p class="text-sm text-slate-500">Find MGNREGA worksites, local craftsmanship jobs, and free skill development programs</p>
+                    </div>
+
+                    <button onclick="showJobPostingModal()" class="bg-amber-600 hover:bg-amber-700 text-white font-medium px-4 py-2 rounded-xl text-xs transition flex items-center gap-2">
+                        <i class="fa-solid fa-plus"></i> Post Local Job Requirement
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5" id="jobs-container">
+                    
+                    <div class="card-element bg-slate-50 p-5 rounded-2xl border border-slate-200">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="bg-amber-100 text-amber-800 text-xs px-2.5 py-0.5 rounded-full font-bold">MGNREGA Rural Work</span>
+                            <span class="text-xs text-slate-500">Panchayat Office</span>
+                        </div>
+                        <h3 class="font-bold text-slate-900 text-base">Pond Desilting & Canal Maintenance</h3>
+                        <p class="text-xs text-slate-600 mt-1 mb-3">15 days wage employment work available under Gram Panchayat worksite #4.</p>
+                        
+                        <div class="flex items-center justify-between text-xs bg-white p-3 rounded-xl border border-slate-200 mb-4">
+                            <div><strong>Daily Wage:</strong> ₹237 / day</div>
+                            <div><strong>Vacancies:</strong> 25 Laborers</div>
+                        </div>
+
+                        <button onclick="showQuickAlert('Applied for MGNREGA Work ID #4. Please visit Gram Rozgar Sevak with Job Card.')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 rounded-xl text-xs transition">
+                            Apply with Job Card
+                        </button>
+                    </div>
+
+                    <div class="card-element bg-slate-50 p-5 rounded-2xl border border-slate-200">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="bg-emerald-100 text-emerald-800 text-xs px-2.5 py-0.5 rounded-full font-bold">Skill Training</span>
+                            <span class="text-xs text-slate-500">PMKVY Center</span>
+                        </div>
+                        <h3 class="font-bold text-slate-900 text-base">Solar Panel Installation Technician</h3>
+                        <p class="text-xs text-slate-600 mt-1 mb-3">Free 4-week vocational skill training certification course with stipend.</p>
+                        
+                        <div class="flex items-center justify-between text-xs bg-white p-3 rounded-xl border border-slate-200 mb-4">
+                            <div><strong>Duration:</strong> 1 Month</div>
+                            <div><strong>Eligibility:</strong> 8th Pass Youth</div>
+                        </div>
+
+                        <button onclick="showQuickAlert('Enrolled for Solar Technician Training Batch. Training officer will call shortly.')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 rounded-xl text-xs transition">
+                            Register Free Training
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ================= 6. ADMIN & VOLUNTEER DASHBOARD ================= -->
+        <section id="view-admin" class="view-content space-y-6 hidden">
+            <div class="card-element bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                <div class="flex items-center justify-between border-b border-slate-200 pb-4 mb-6">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-900"><i class="fa-solid fa-user-shield text-emerald-600 mr-2"></i> Local Administrator & Volunteer Portal</h2>
+                        <p class="text-xs text-slate-500">Manage notices, post local updates, and assist citizens with digital applications</p>
+                    </div>
+                    <span class="bg-slate-100 text-slate-700 text-xs font-semibold px-3 py-1 rounded-full border border-slate-300">
+                        Role: Gram Mitra / Panchayat Sec
+                    </span>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Form: Post Announcement -->
+                    <div class="lg:col-span-1 card-element bg-slate-50 p-5 rounded-2xl border border-slate-200">
+                        <h3 class="font-bold text-slate-900 text-base mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-bullhorn text-emerald-600"></i> Post New Notice
+                        </h3>
+                        
+                        <form onsubmit="handlePostNotice(event)" class="space-y-3 text-xs">
+                            <div>
+                                <label class="block font-semibold text-slate-700 mb-1">Notice Title</label>
+                                <input type="text" id="admin-notice-title" required placeholder="e.g. Health Camp / CSC Update" class="w-full p-2.5 border border-slate-300 rounded-xl focus:outline-none focus:border-emerald-500">
+                            </div>
+
+                            <div>
+                                <label class="block font-semibold text-slate-700 mb-1">Notice Details</label>
+                                <textarea id="admin-notice-desc" rows="3" required placeholder="Describe details for village residents..." class="w-full p-2.5 border border-slate-300 rounded-xl focus:outline-none focus:border-emerald-500"></textarea>
+                            </div>
+
+                            <div>
+                                <label class="block font-semibold text-slate-700 mb-1">Category</label>
+                                <select id="admin-notice-cat" class="w-full p-2.5 border border-slate-300 rounded-xl focus:outline-none focus:border-emerald-500 bg-white">
+                                    <option value="emerald">Health & Advisory</option>
+                                    <option value="blue">Government Scheme</option>
+                                    <option value="amber">Work / MGNREGA</option>
+                                </select>
+                            </div>
+
+                            <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-2.5 rounded-xl transition text-xs flex items-center justify-center gap-1">
+                                <i class="fa-solid fa-paper-plane"></i> Broadcast Notice to Platform
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Citizen Assistance & Query Resolution -->
+                    <div class="lg:col-span-2 card-element bg-slate-50 p-5 rounded-2xl border border-slate-200">
+                        <h3 class="font-bold text-slate-900 text-base mb-3 flex items-center justify-between">
+                            <span><i class="fa-solid fa-headset text-emerald-600 mr-2"></i> Pending Citizen Guidance Queries</span>
+                            <span class="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full font-bold">2 Pending</span>
+                        </h3>
+
+                        <div class="space-y-3 text-xs">
+                            <div class="bg-white p-3.5 rounded-xl border border-slate-200 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
+                                <div>
+                                    <div class="font-bold text-slate-900">Ramesh Kumar (Villager ID: #982)</div>
+                                    <p class="text-slate-600 mt-0.5">"Needs assistance with PM-Kisan bank account linking rejected status."</p>
+                                </div>
+                                <button onclick="showQuickAlert('Resolved query for Ramesh Kumar. Direct message sent via SMS.')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg font-medium transition text-xs whitespace-nowrap">
+                                    Mark Resolved & Assist
+                                </button>
+                            </div>
+
+                            <div class="bg-white p-3.5 rounded-xl border border-slate-200 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
+                                <div>
+                                    <div class="font-bold text-slate-900">Sita Devi (Villager ID: #104)</div>
+                                    <p class="text-slate-600 mt-0.5">"Inquiry regarding Ujjwala LPG second cylinder subsidy delivery."</p>
+                                </div>
+                                <button onclick="showQuickAlert('Resolved query for Sita Devi. Direct message sent via SMS.')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg font-medium transition text-xs whitespace-nowrap">
+                                    Mark Resolved & Assist
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ================= 7. PROJECT & TEAM SUBMISSION INFO TAB ================= -->
+        <section id="view-team" class="view-content space-y-6 hidden">
+            <!-- Details Box Matching Screenshots -->
+            <div class="card-element bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6">
+                
+                <!-- Title & Category Header -->
+                <div class="border-b border-slate-200 pb-5">
+                    <span class="bg-blue-100 text-blue-900 font-bold text-xs px-3 py-1 rounded-full uppercase tracking-wider inline-block mb-2">Category 1: Smart Solutions, Smarter Society</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">GramConnect: An Affordable Digital Platform for Rural Services and Development</h2>
+                    <p class="text-slate-600 text-sm mt-1"><strong>Domain:</strong> Affordable Technology for Rural Development</p>
+                </div>
+
+                <!-- Abstract Text as per Screenshots -->
+                <div class="prose prose-slate max-w-none text-xs sm:text-sm text-slate-700 leading-relaxed space-y-4">
+                    <h3 class="text-base font-bold text-slate-900 border-b border-slate-100 pb-1">Abstract</h3>
+                    
+                    <p>
+                        Rural communities often face difficulties accessing essential services, including government welfare schemes, healthcare information, agricultural guidance, education resources, and local employment opportunities. Limited digital awareness, language barriers, and a lack of centralized information can make these services difficult to access.
+                    </p>
+
+                    <p>
+                        <strong>GramConnect</strong> is an affordable, user-friendly digital platform designed to bridge this gap by connecting rural citizens with essential information and services through a single interface. The platform provides information about government schemes, eligibility requirements, application procedures, agricultural best practices, nearby healthcare facilities, and local job opportunities. It aims to present information in simple language and support regional languages so that users with limited digital literacy can navigate the system easily.
+                    </p>
+
+                    <p>
+                        The proposed solution can include a low-bandwidth interface, voice-assisted navigation, location-based service information, and an offline-accessible information section for areas with unreliable internet connectivity. A dedicated dashboard can help local administrators and community volunteers update information and guide users toward relevant services.
+                    </p>
+
+                    <p class="font-medium text-slate-900 bg-emerald-50 p-3 rounded-xl border border-emerald-100">
+                        GramConnect aims to reduce information gaps, improve access to public services, support rural livelihoods, and promote inclusive digital development through an affordable and scalable technology solution.
+                    </p>
+                </div>
+
+                <!-- Submission Team Details Card -->
+                <div class="card-element bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                    <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center justify-between">
+                        <span>Team Details</span>
+                        <span class="bg-emerald-600 text-white text-xs px-2.5 py-0.5 rounded-full font-semibold"><i class="fa-solid fa-lock mr-1"></i> Submitted & Locked</span>
+                    </h3>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 text-xs sm:text-sm">
+                        <div>
+                            <span class="text-slate-500 block">Team ID</span>
+                            <strong class="text-slate-900 font-mono text-base">IT26-0392</strong>
+                        </div>
+                        <div>
+                            <span class="text-slate-500 block">Status</span>
+                            <strong class="text-emerald-700 font-semibold">Submitted and locked</strong>
+                        </div>
+                        <div>
+                            <span class="text-slate-500 block">Department</span>
+                            <strong class="text-slate-900 font-semibold">CSE</strong>
+                        </div>
+                        <div>
+                            <span class="text-slate-500 block">Route</span>
+                            <strong class="text-slate-900 font-semibold">Department round, then Grand Finale</strong>
+                        </div>
+                        <div>
+                            <span class="text-slate-500 block">Created</span>
+                            <strong class="text-slate-900 font-semibold">12 Oct 2026</strong>
+                        </div>
+                        <div>
+                            <span class="text-slate-500 block">Event</span>
+                            <strong class="text-blue-700 font-semibold">InnoTech26 - KIET University</strong>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- STEP-BY-STEP SCHEME MODAL -->
+    <div id="guide-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200">
+            <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3">
+                <h3 id="modal-title" class="font-bold text-lg text-slate-900">Scheme Guide</h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 p-1"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            
+            <div id="modal-content" class="text-xs sm:text-sm text-slate-700 space-y-3 whitespace-pre-line mb-6">
+                <!-- Dynamic Content inserted here -->
+            </div>
+
+            <div class="flex gap-2">
+                <button onclick="showQuickAlert('Connecting with local Gram Mitra volunteer to assist your application...')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 rounded-xl text-xs transition">
+                    Request Volunteer Assistance
+                </button>
+                <button onclick="closeModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-800 font-medium px-4 py-2 rounded-xl text-xs transition">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOTIFICATION TOAST -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl z-50 text-xs sm:text-sm hidden flex items-center gap-2 border border-slate-700">
+        <i class="fa-solid fa-circle-check text-emerald-400 text-base"></i>
+        <span id="toast-msg">Action performed successfully.</span>
+    </div>
+
+    <!-- FOOTER WITH INNOTECH26 BRANDING -->
+    <footer class="bg-white border-t border-slate-200 py-6 mt-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-slate-500">
+                <div>
+                    <strong class="text-slate-900">InnoTech26</strong>, KIET Deemed to be University
+                </div>
+
+                <div class="flex items-center space-x-6">
+                    <a href="#" onclick="showQuickAlert('InnoTech26 Project Guidelines Loaded.'); return false;" class="hover:text-emerald-600">Guidelines</a>
+                    <a href="#" onclick="showQuickAlert('FAQ: GramConnect is designed for low digital literacy citizens using audio and offline capability.'); return false;" class="hover:text-emerald-600">FAQ</a>
+                    <a href="mailto:innotech@kiet.edu" class="hover:text-emerald-600 font-semibold text-blue-700">innotech@kiet.edu</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- INTERACTIVE JAVASCRIPT LOGIC -->
+    <script>
+        // State variables
+        let voiceEnabled = false;
+        let lowBandwidth = false;
+
+        // Tab Switching Logic
+        function switchTab(tabId) {
+            // Hide all views
+            const views = document.querySelectorAll('.view-content');
+            views.forEach(v => v.classList.add('hidden'));
+
+            // Show target view
+            const target = document.getElementById('view-' + tabId);
+            if (target) {
+                target.classList.remove('hidden');
+            }
+
+            // Update Tab active styling
+            const navButtons = document.querySelectorAll('.tab-btn');
+            navButtons.forEach(btn => btn.classList.remove('active'));
+
+            const activeBtn = document.getElementById('tab-btn-' + tabId);
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            if(voiceEnabled) {
+                speakText('Navigated to ' + tabId + ' page');
+            }
+        }
+
+        // Toggle Mobile Nav
+        function toggleMobileNav() {
+            const nav = document.getElementById('mobile-nav');
+            nav.classList.toggle('hidden');
+        }
+
+        // Accessibility: Font Size Control
+        function setFontSize(size) {
+            const body = document.getElementById('app-body');
+            body.classList.remove('text-size-sm', 'text-size-base', 'text-size-lg');
+            if (size === 'sm') body.classList.add('text-size-sm');
+            if (size === 'base') body.classList.add('text-size-base');
+            if (size === 'lg') body.classList.add('text-size-lg');
+            showQuickAlert('Font size adjusted to ' + size.toUpperCase());
+        }
+
+        // Voice Assistant Simulation / Web Speech Synthesis API
+        function toggleVoiceAssistant() {
+            voiceEnabled = !voiceEnabled;
+            const btnTxt = document.getElementById('voice-txt');
+            const banner = document.getElementById('voice-banner');
+
+            if (voiceEnabled) {
+                btnTxt.innerText = "Voice: ON";
+                banner.classList.remove('hidden');
+                speakText("Voice Assistant Enabled. Click any heading or section to listen.");
+            } else {
+                btnTxt.innerText = "Voice: OFF";
+                banner.classList.add('hidden');
+                stopVoiceAudio();
+            }
+        }
+
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); // Stop ongoing speech
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate = 0.95;
+                window.speechSynthesis.speak(utterance);
+            } else {
+                showQuickAlert("Audio: " + text);
+            }
+        }
+
+        function stopVoiceAudio() {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+        }
+
+        // Low Bandwidth Simulation
+        function toggleLowBandwidth() {
+            lowBandwidth = !lowBandwidth;
+            const body = document.getElementById('app-body');
+            const bwTxt = document.getElementById('bw-txt');
+
+            if (lowBandwidth) {
+                body.classList.add('low-bandwidth');
+                bwTxt.innerText = "Low-BW: ON";
+                showQuickAlert('Low Bandwidth Mode Activated (Data Saving Enabled)');
+            } else {
+                body.classList.remove('low-bandwidth');
+                bwTxt.innerText = "Low-BW Mode";
+                showQuickAlert('Standard High-Speed Mode Restored');
+            }
+        }
+
+        // Language Switcher Simulation
+        function changeLanguage(lang) {
+            if (lang === 'hi') {
+                showQuickAlert('भाषा बदलकर हिन्दी कर दी गई है (Language set to Hindi)');
+                if(voiceEnabled) speakText('हिन्दी भाषा चुनी गई है');
+            } else if (lang === 'reg') {
+                showQuickAlert('क्षेत्रीय भाषा (भोजपुरी/मैथिली) मोड सक्रिय');
+            } else {
+                showQuickAlert('Language set to English');
+            }
+        }
+
+        // Scheme Filter Logic
+        function filterSchemes() {
+            const query = document.getElementById('scheme-search').value.toLowerCase();
+            const category = document.getElementById('scheme-category').value;
+            const items = document.querySelectorAll('.scheme-item');
+
+            items.forEach(item => {
+                const title = item.querySelector('h3').innerText.toLowerCase();
+                const desc = item.querySelector('p').innerText.toLowerCase();
+                const itemCat = item.getAttribute('data-category');
+
+                const matchesSearch = title.includes(query) || desc.includes(query);
+                const matchesCat = (category === 'all') || (itemCat === category);
+
+                if (matchesSearch && matchesCat) {
+                    item.classList.remove('hidden');
+                } else {
+                    item.classList.add('hidden');
+                }
+            });
+        }
+
+        // Mandi Data Refresh Simulation
+        function refreshMandiData() {
+            showQuickAlert('Updated live Mandi rates from APMC Server!');
+        }
+
+        // Modal Handlers
+        function openModal(title, content) {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-content').innerText = content;
+            document.getElementById('guide-modal').classList.remove('hidden');
+            if(voiceEnabled) speakText('Step by step guide for ' + title);
+        }
+
+        function closeModal() {
+            document.getElementById('guide-modal').classList.add('hidden');
+        }
+
+        // Quick Alert Toast Notification
+        function showQuickAlert(msg) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-msg');
+            toastMsg.innerText = msg;
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3500);
+        }
+
+        // Admin Notice Post Logic
+        function handlePostNotice(e) {
+            e.preventDefault();
+            const title = document.getElementById('admin-notice-title').value;
+            const desc = document.getElementById('admin-notice-desc').value;
+            const cat = document.getElementById('admin-notice-cat').value;
+
+            const container = document.getElementById('notice-board-container');
+            const newCard = document.createElement('div');
+            newCard.className = `p-3.5 bg-${cat}-50 rounded-xl border border-${cat}-200 flex items-start gap-3`;
+            newCard.innerHTML = `
+                <i class="fa-solid fa-circle-info text-${cat}-600 text-lg mt-0.5"></i>
+                <div>
+                    <h4 class="font-semibold text-slate-900 text-sm">${title}</h4>
+                    <p class="text-xs text-slate-600 mt-0.5">${desc}</p>
+                </div>
+            `;
+            container.prepend(newCard);
+
+            // Reset form
+            document.getElementById('admin-notice-title').value = '';
+            document.getElementById('admin-notice-desc').value = '';
+
+            showQuickAlert('New notice broadcasted live to Gram Panchayat board!');
+        }
+
+        // Post Job Modal Simulation
+        function showJobPostingModal() {
+            const jobTitle = prompt("Enter Local Job Title (e.g. Mason / Helper / Handicraft worker):");
+            if (jobTitle) {
+                const container = document.getElementById('jobs-container');
+                const newJob = document.createElement('div');
+                newJob.className = "card-element bg-slate-50 p-5 rounded-2xl border border-slate-200";
+                newJob.innerHTML = `
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="bg-emerald-100 text-emerald-800 text-xs px-2.5 py-0.5 rounded-full font-bold">Local Community Job</span>
+                        <span class="text-xs text-slate-500">Just Now</span>
+                    </div>
+                    <h3 class="font-bold text-slate-900 text-base">${jobTitle}</h3>
+                    <p class="text-xs text-slate-600 mt-1 mb-3">Required in local village block. Daily wage based work.</p>
+                    <button onclick="showQuickAlert('Application registered for ${jobTitle}')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 rounded-xl text-xs transition">
+                        Apply Now
+                    </button>
+                `;
+                container.prepend(newJob);
+                showQuickAlert('Local job posted successfully!');
+            }
+        }
+    </script>
+</body>
+</html>
