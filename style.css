@@ -1,27 +1,49 @@
 
-/* ===== GramConnect: Rural Theme ===== */
+
+/* =====================================================================
+   GramConnect: combined stylesheet
+   Part 1: shared variables and base
+   Part 2: Rural Theme (Tailwind-based app: tabs, cards, buttons, modals)
+   Part 3: Landing site (scoped to body.gc-site so nothing clashes with Part 2)
+   ===================================================================== */
+
+/* ===== Part 1: Variables ===== */
 :root{
+  /* rural theme */
   --cream:#fbf4e4; --paper:#fffcf3; --sand:#e8dcc0; --sand-dark:#d3c096;
   --soil:#3f2a18; --soil-2:#5a4432; --soil-3:#86705a;
   --leaf:#2f6b3f; --leaf-dark:#1f4d2c; --leaf-light:#e8f1de; --leaf-border:#cadbb8;
   --clay:#c2571a; --clay-light:#fbe7d8; --clay-border:#f0c8aa;
   --turmeric:#e3a21a; --turmeric-light:#fdf0cb; --turmeric-border:#f0dc9c; --turmeric-text:#85570a;
   --river:#2d6a8a; --river-light:#e0eef5; --river-border:#bcd8e6;
+  /* landing site */
+  --green:#0b6b50; --deep:#063d30; --mint:#2fd19a; --gold:#f2b84b; --brown:#3b2415;
+  --ink:#fff; --ink2:rgba(255,255,255,.82);
+  --bg:var(--cream); --txt:var(--brown); --card:#fff; --line:rgba(59,36,21,.12);
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
 }
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#0f1d18;--txt:#f3ead6;--card:#16291f;--line:rgba(255,255,255,.12)}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#0f1d18;--txt:#f3ead6;--card:#16291f;--line:rgba(255,255,255,.12)}
 
-/* ----- Original utility rules (low-bandwidth, text size) ----- */
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:env(safe-area-inset-top,0px)}
+[hidden]{display:none!important}
+
+/* ===== Part 2: Rural Theme (app) ===== */
+
+/* ----- Utility rules (low-bandwidth, text size) ----- */
 .low-bandwidth img,.low-bandwidth .bg-decorative{display:none!important}
 .low-bandwidth *{box-shadow:none!important;animation:none!important;transition:none!important}
 .low-bandwidth .card-element{border:2px solid #333!important;background:#fff!important}
-.low-bandwidth header.sticky::after,
 .low-bandwidth .bg-gradient-to-r::before,
 .low-bandwidth .bg-gradient-to-r::after{display:none}
 body#app-body.low-bandwidth{background-image:none}
 .text-size-sm{font-size:.875rem}.text-size-base{font-size:1rem}.text-size-lg{font-size:1.125rem}
 
 /* ----- Base ----- */
-html{scroll-behavior:smooth}
-body{font-family:'Hind','Inter',sans-serif;line-height:1.55}
+body{font-family:'Hind','Inter',sans-serif;line-height:1.55;margin:0}
 body#app-body{
   background-color:var(--cream);
   background-image:radial-gradient(rgba(139,94,52,.10) 1.2px,transparent 1.6px);
@@ -35,17 +57,11 @@ h1,h2,h3{font-family:'Baloo 2','Hind',sans-serif;letter-spacing:.1px}
 ::-webkit-scrollbar-thumb{background:var(--sand-dark);border-radius:10px;border:2px solid var(--cream)}
 body :focus-visible{outline:3px solid var(--turmeric);outline-offset:2px}
 
-/* ----- Header with durrie strip ----- */
+/* ----- Header ----- */
 body header.sticky{
   background-color:var(--paper);
   border-bottom:0;
   box-shadow:0 2px 10px rgba(90,60,30,.12);
-}
-body header.sticky::after{
-  content:"";position:absolute;left:0;right:0;bottom:-6px;height:6px;
-  background:repeating-linear-gradient(90deg,
-    var(--clay) 0 16px, var(--turmeric) 16px 32px,
-    var(--leaf) 32px 48px, var(--river) 48px 64px);
 }
 
 /* ----- Tabs ----- */
@@ -112,7 +128,6 @@ body footer.text-center{background:#3a2616;color:#e9dcc0;border-top:5px solid va
 /* ----- Page animation ----- */
 @keyframes gcFade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .view-content:not(.hidden){animation:gcFade .35s ease both}
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
 /* ===== Palette remap (Tailwind colours -> rural colours) ===== */
 /* text */
@@ -164,3 +179,63 @@ body .hover\:border-emerald-500:hover,body .hover\:border-emerald-400:hover{bord
 body .border-blue-100{border-color:var(--river-border)}
 body .border-red-100{border-color:var(--clay-border)}
 body .border-amber-100{border-color:var(--turmeric-border)}
+
+/* ===== Part 3: Landing site (use <body class="gc-site">) ===== */
+.gc-site{font-family:Manrope,'Hind',system-ui,sans-serif;background:var(--bg);color:var(--txt)}
+.gc-site a{color:inherit;text-decoration:none}
+
+/* First page (hero with farm photo) */
+.gc-site .hero{position:relative;min-height:100vh;min-height:100svh;color:var(--ink);display:flex;flex-direction:column;background:linear-gradient(180deg,rgba(6,61,48,.72) 0%,rgba(6,61,48,.25) 40%,rgba(4,38,30,.92) 100%),url(farm.jpg) center/cover no-repeat}
+.gc-site .hero-body{flex:1;display:flex;align-items:center;justify-content:center;gap:32px;padding:40px clamp(20px,4vw,56px) 12vh;flex-wrap:wrap}
+
+/* Menu */
+.gc-site nav{display:flex;align-items:center;gap:28px;padding:20px clamp(16px,4vw,48px);flex-wrap:wrap}
+.gc-site .navl{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.gc-site .nb{font:600 14px Manrope,'Hind',sans-serif;color:#fff;background:transparent;border:0;border-bottom:2px solid transparent;padding:10px 14px;cursor:pointer;border-radius:8px}
+.gc-site .nb:hover,.gc-site .nb.on{border-bottom-color:var(--gold);background:rgba(255,255,255,.1)}
+.gc-site .nb:focus-visible{outline:3px solid var(--gold)}
+.gc-site #login{background:#fffaf0;color:var(--brown);border-radius:10px;margin-left:6px}
+.gc-site select{font:600 13px Manrope,'Hind',sans-serif;border-radius:10px;padding:10px 14px;border:0;background:#fffaf0;color:var(--brown);cursor:pointer;min-height:0}
+.gc-site select:focus-visible{outline:3px solid var(--gold);outline-offset:2px;box-shadow:none}
+.gc-site .back{display:none}
+.gc-site.pg .back{display:inline-block}
+
+/* GramConnect name (high-contrast Didone serif) */
+.gc-site h1,.gc-site section h2,.gc-site .card h3{font-family:'Bodoni Moda','Didot','Bodoni 72',Georgia,serif}
+.gc-site h1{margin:0;text-shadow:0 6px 40px rgba(0,0,0,.35);font-weight:500;letter-spacing:.01em;text-transform:uppercase;font-optical-sizing:auto;text-align:center;line-height:.9;font-size:clamp(44px,10vw,120px)}
+.gc-site h1{color:#ff0000}
+.gc-site h1 b{color:#ff0000}
+
+/* Home / Services / Contact pages */
+.gc-site.pg .hero{min-height:0;background:var(--deep)}
+.gc-site.pg .hero-body{display:none}
+.gc-site.pg section{min-height:70vh}
+.gc-site section{padding:80px clamp(20px,4vw,56px)}
+.gc-site section h2{font-weight:800;font-size:clamp(30px,4vw,44px);text-align:center;margin:0 0 8px}
+.gc-site section>p{text-align:center;margin:0 auto 44px;max-width:560px;opacity:.75;line-height:1.6}
+.gc-site .about{max-width:760px;margin:0 auto 64px;text-align:center}
+.gc-site .about h2{margin-bottom:14px}
+.gc-site .about p{font-size:17px;line-height:1.75;opacity:.85;margin:0 0 12px}
+
+/* Module cards */
+.gc-site .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;max-width:1180px;margin:0 auto}
+.gc-site .card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:28px;transition:transform .2s,border-color .2s}
+.gc-site .card:hover{transform:translateY(-4px);border-color:var(--green)}
+.gc-site .ic{width:54px;height:54px;border-radius:16px;display:grid;place-items:center;font-size:26px;margin-bottom:18px;background:var(--green);color:#fff}
+.gc-site .card:nth-child(2) .ic{background:var(--gold);color:var(--brown)}
+.gc-site .card:nth-child(3) .ic{background:var(--mint);color:var(--deep)}
+.gc-site .card:nth-child(4) .ic{background:var(--brown);color:#fff}
+.gc-site .card h3{font-weight:800;font-size:21px;margin:0 0 8px}
+.gc-site .card p{margin:0 0 16px;font-size:14.5px;line-height:1.6;opacity:.8}
+.gc-site .card a{font-weight:600;font-size:14px;color:var(--green)}
+@media(prefers-color-scheme:dark){.gc-site .card a{color:var(--mint)}}
+
+/* Footer and message */
+.gc-site footer{padding:28px;text-align:center;font-size:13px;opacity:.65}
+.gc-site .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(80px);background:var(--brown);color:#fff;padding:12px 20px;border-radius:12px;font-size:14px;transition:transform .3s;z-index:9}
+.gc-site .toast.on{transform:translateX(-50%)}
+
+/* ----- Reduced motion (applies to everything) ----- */
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+}
