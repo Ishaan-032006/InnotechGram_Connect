@@ -277,107 +277,6 @@ const DICT = {
 
 
 /* ============================
-   HAQ METER TRANSLATIONS
-   ============================ */
-
-const HAQ_TRANSLATIONS = {
-  "Haq Meter": "हक़ मीटर",
-  "About you": "आपके बारे में",
-  "About You": "आपके बारे में",
-  "Your possible matches": "आपके लिए संभावित योजनाएँ",
-  "Your possible schemes": "आपके लिए संभावित योजनाएँ",
-
-  "This is an indicative demo match. The official portal or department must confirm final eligibility.":
-    "यह केवल एक प्रारंभिक डेमो है। अंतिम पात्रता की पुष्टि आधिकारिक पोर्टल या विभाग द्वारा की जाएगी।",
-
-  "We do not add different scheme benefits into a misleading total.":
-    "अलग-अलग योजनाओं के लाभों को जोड़कर भ्रामक कुल राशि नहीं दिखाई जाती।",
-
-  "Name (optional)": "नाम (वैकल्पिक)",
-  "Your age": "आपकी उम्र",
-  "Gender": "लिंग",
-  "State / Union Territory": "राज्य / केंद्र शासित प्रदेश",
-  "What best describes your need?": "आपको किस प्रकार की सहायता चाहिए?",
-  "Social category (optional)": "सामाजिक श्रेणी (वैकल्पिक)",
-  "Annual household income": "परिवार की वार्षिक आय",
-  "Agricultural land (acres, if applicable)": "कृषि भूमि (एकड़ में, यदि लागू हो)",
-
-  "e.g., Ramesh": "उदाहरण: रमेश",
-  "Enter age": "अपनी उम्र दर्ज करें",
-  "Select gender": "लिंग चुनें",
-  "Select your state": "अपना राज्य चुनें",
-  "Select a category": "श्रेणी चुनें",
-  "Prefer not to say": "बताना नहीं चाहते",
-
-  "Male": "पुरुष",
-  "Female": "महिला",
-  "Other": "अन्य",
-
-  "General": "सामान्य",
-  "OBC": "अन्य पिछड़ा वर्ग (OBC)",
-  "SC": "अनुसूचित जाति (SC)",
-  "ST": "अनुसूचित जनजाति (ST)",
-  "Prefer not to disclose": "बताना नहीं चाहते",
-
-  "Health": "स्वास्थ्य",
-  "Agriculture": "कृषि",
-  "Education": "शिक्षा",
-  "Employment": "रोज़गार",
-  "Housing": "आवास",
-  "Financial Assistance": "वित्तीय सहायता",
-
-  "Below ₹1 lakh": "₹1 लाख से कम",
-  "₹1–2 lakh": "₹1–2 लाख",
-  "₹2–3 lakh": "₹2–3 लाख",
-  "₹3–5 lakh": "₹3–5 लाख",
-  "Above ₹5 lakh": "₹5 लाख से अधिक",
-
-  "No agricultural land": "कोई कृषि भूमि नहीं",
-  "Less than 1 acre": "1 एकड़ से कम",
-  "1–2 acres": "1–2 एकड़",
-  "2–5 acres": "2–5 एकड़",
-  "More than 5 acres": "5 एकड़ से अधिक",
-
-  "I have a ration card (may be relevant for some health or household schemes).":
-    "मेरे पास राशन कार्ड है (कुछ स्वास्थ्य या घरेलू योजनाओं के लिए उपयोगी हो सकता है)।",
-
-  "I have land ownership / land record documents.":
-    "मेरे पास भूमि स्वामित्व / भूमि रिकॉर्ड के दस्तावेज़ हैं।",
-
-  "Find schemes for me": "मेरे लिए योजनाएँ खोजें",
-  "Reset": "रीसेट करें",
-
-  "Complete the form to see relevant schemes and next steps here.":
-    "संबंधित योजनाएँ और आगे की प्रक्रिया देखने के लिए फ़ॉर्म पूरा करें।",
-
-  "Simple questions": "आसान सवाल",
-  "Apply Kit": "आवेदन किट",
-  "Print / Save PDF": "प्रिंट करें / PDF सेव करें",
-
-  "Possible match": "संभावित योजना",
-  "Why you may qualify": "आप पात्र क्यों हो सकते हैं",
-  "Benefits": "लाभ",
-  "Documents required": "आवश्यक दस्तावेज़",
-  "Next steps": "आगे की प्रक्रिया",
-  "Official website": "आधिकारिक वेबसाइट",
-  "Check eligibility": "पात्रता जाँचें",
-
-  "Application Checklist": "आवेदन चेकलिस्ट",
-  "Documents checklist": "दस्तावेज़ों की चेकलिस्ट",
-  "Download checklist": "चेकलिस्ट डाउनलोड करें",
-  "Print checklist": "चेकलिस्ट प्रिंट करें",
-
-  "PM-KISAN": "पीएम-किसान",
-  "PM Fasal Bima Yojana": "प्रधानमंत्री फसल बीमा योजना",
-  "Ayushman Bharat": "आयुष्मान भारत",
-  "MGNREGA": "मनरेगा",
-  "Ujjwala Yojana": "उज्ज्वला योजना",
-  "PMAY-Gramin": "प्रधानमंत्री आवास योजना - ग्रामीण",
-  "National Scholarship Portal": "राष्ट्रीय छात्रवृत्ति पोर्टल"
-};
-
-
-/* ============================
    LANGUAGE INITIALIZATION
    ============================ */
 
@@ -410,139 +309,15 @@ function getSpeechLang() {
 
 
 /* ============================
-   HAQ METER TRANSLATION ENGINE
-   ============================ */
-
-const haqOriginalText = new WeakMap();
-const haqOriginalAttributes = new WeakMap();
-
-function applyHaqLanguage(lang) {
-  const root =
-    document.getElementById("view-haq-meter") ||
-    document.getElementById("haq-meter");
-
-  if (!root) return;
-
-  const useHindi = lang === "hi";
-
-  /*
-   * Save original text the first time each text node is seen.
-   * This lets us switch English -> Hindi -> English safely.
-   */
-  const walker = document.createTreeWalker(
-    root,
-    NodeFilter.SHOW_TEXT
-  );
-
-  const nodes = [];
-  let node;
-
-  while ((node = walker.nextNode())) {
-    const parent = node.parentElement;
-
-    if (
-      !parent ||
-      ["SCRIPT", "STYLE", "NOSCRIPT"].includes(parent.tagName)
-    ) {
-      continue;
-    }
-
-    if (!haqOriginalText.has(node)) {
-      haqOriginalText.set(node, node.nodeValue);
-    }
-
-    nodes.push(node);
-  }
-
-  nodes.forEach(textNode => {
-    const original = haqOriginalText.get(textNode);
-    if (typeof original !== "string") return;
-
-    const trimmed = original.trim();
-    if (!trimmed) return;
-
-    let translated = original;
-
-    if (useHindi && HAQ_TRANSLATIONS[trimmed]) {
-      translated = original.replace(
-        trimmed,
-        HAQ_TRANSLATIONS[trimmed]
-      );
-    }
-
-    textNode.nodeValue = translated;
-  });
-
-  /*
-   * Translate placeholders, dropdown options and accessibility labels.
-   * Original values are saved so English can be restored correctly.
-   */
-  const attributes = [
-    "placeholder",
-    "aria-label",
-    "title"
-  ];
-
-  root.querySelectorAll(
-    "input, textarea, select, option, button, [aria-label], [title]"
-  ).forEach(el => {
-    attributes.forEach(attr => {
-      if (!el.hasAttribute(attr)) return;
-
-      let saved = haqOriginalAttributes.get(el);
-
-      if (!saved) {
-        saved = {};
-        haqOriginalAttributes.set(el, saved);
-      }
-
-      if (!(attr in saved)) {
-        saved[attr] = el.getAttribute(attr);
-      }
-
-      const original = saved[attr];
-      if (!original) return;
-
-      if (useHindi && HAQ_TRANSLATIONS[original]) {
-        el.setAttribute(attr, HAQ_TRANSLATIONS[original]);
-      } else {
-        el.setAttribute(attr, original);
-      }
-    });
-  });
-
-  /*
-   * Dropdown options need their text translated separately.
-   */
-  root.querySelectorAll("option").forEach(option => {
-    if (!haqOriginalText.has(option.firstChild) && option.firstChild) {
-      haqOriginalText.set(option.firstChild, option.firstChild.nodeValue);
-    }
-
-    const original = option.firstChild
-      ? haqOriginalText.get(option.firstChild)
-      : null;
-
-    if (!original) return;
-
-    const trimmed = original.trim();
-
-    if (useHindi && HAQ_TRANSLATIONS[trimmed]) {
-      option.textContent = HAQ_TRANSLATIONS[trimmed];
-    } else {
-      option.textContent = original;
-    }
-  });
-}
-
-/* Expose function so other scripts can call it. */
-window.applyHaqLanguage = applyHaqLanguage;
-
-
-/* ============================
    APPLY LANGUAGE TO WEBSITE
    ============================ */
 
+/*
+ * FIX: pehle yahan ek alag "applyHaqLanguage" engine aur ek MutationObserver tha.
+ * Wo index.html wale applyHaqLanguage se takra raha tha (same naam) aur infinite loop bana sakta tha.
+ * Ab Haq Meter ki language sirf index.html ka window.applyHaqLanguage sambhalta hai.
+ * Yahan bas use call kiya jata hai.
+ */
 function applyLang() {
   document.documentElement.lang = currentLang;
 
@@ -566,9 +341,7 @@ function applyLang() {
 
   window.__gramConnectLanguage = currentLang;
 
-  /*
-   * Re-render dynamic website content first.
-   */
+  /* Dynamic website content (scheme cards etc.) dobara banao */
   if (typeof window.onLangChange === "function") {
     try {
       window.onLangChange();
@@ -577,10 +350,14 @@ function applyLang() {
     }
   }
 
-  /*
-   * Then translate Haq Meter.
-   */
-  applyHaqLanguage(currentLang);
+  /* Haq Meter ki language (function index.html me defined hai) */
+  if (typeof window.applyHaqLanguage === "function") {
+    try {
+      window.applyHaqLanguage(currentLang);
+    } catch (e) {
+      console.error("Haq Meter language error:", e);
+    }
+  }
 }
 
 
@@ -604,13 +381,6 @@ function setLang(lang) {
   }
 
   applyLang();
-
-  /*
-   * Apply again after the current browser update cycle.
-   */
-  requestAnimationFrame(() => {
-    applyHaqLanguage(currentLang);
-  });
 }
 
 
@@ -630,22 +400,4 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   applyLang();
-
-  /*
-   * Observe dynamically generated Haq Meter results.
-   */
-  const root =
-    document.getElementById("view-haq-meter") ||
-    document.getElementById("haq-meter");
-
-  if (root) {
-    const observer = new MutationObserver(() => {
-      applyHaqLanguage(currentLang);
-    });
-
-    observer.observe(root, {
-      childList: true,
-      subtree: true
-    });
-  }
 });
