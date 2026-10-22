@@ -177,6 +177,21 @@
   .nb {
     font-size: 15px;
     padding: .65rem .85rem;
+    color: #111827 !important;
+  }
+  /* Keep navigation labels and icons dark and readable on the light header */
+  #landing-nav .nb,
+  #landing-nav .nb span,
+  #landing-nav .nb i,
+  #landing-nav .nb svg {
+    color: #111827 !important;
+    -webkit-text-fill-color: #111827 !important;
+  }
+  #landing-nav .nb:hover,
+  #landing-nav .nb:hover span,
+  #landing-nav .nb:hover i {
+    color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important;
   }
   #subnav { display: none !important; }
   body:not(.page-home) #landing-nav { display: flex !important; }
@@ -1056,9 +1071,41 @@
     const langObserver = new MutationObserver(syncHaqLanguageFromSite);
     document.querySelectorAll('.lang-card').forEach(card => langObserver.observe(card, {attributes:true, attributeFilter:['class']}));
   }
+  // Hard-link the language picker to Haq Meter. The main site's language state
+  // and its active card can briefly disagree, so explicitly apply the selected
+  // language after the site's own handler has finished.
+  const originalHaqPickLang = window.pickLang;
+  window.pickLang = function(code) {
+    if (typeof originalHaqPickLang === 'function') originalHaqPickLang(code);
+    if (code === 'hi' || code === 'en') {
+      const sel = document.getElementById('lang-select');
+      if (sel) sel.value = code;
+      document.querySelectorAll('.lang-card').forEach(card => card.classList.toggle('active', card.dataset.lang === code));
+      document.documentElement.lang = code;
+      applyHaqLanguage(code);
+      window.__gramConnectLanguage = code;
+    }
+  };
+  const originalHaqHandleLangChange = window.handleLangChange;
+  window.handleLangChange = function(sel) {
+    if (typeof originalHaqHandleLangChange === 'function') originalHaqHandleLangChange(sel);
+    const code = sel && sel.value;
+    if (code === 'hi' || code === 'en') {
+      document.querySelectorAll('.lang-card').forEach(card => card.classList.toggle('active', card.dataset.lang === code));
+      document.documentElement.lang = code;
+      applyHaqLanguage(code);
+      window.__gramConnectLanguage = code;
+    }
+  };
   // Also catches language changes performed programmatically by the main app.
-  setInterval(syncHaqLanguageFromSite, 400);
-  syncHaqLanguageFromSite();
+  setInterval(() => {
+    const remembered = window.__gramConnectLanguage;
+    if (remembered === 'hi' || remembered === 'en') applyHaqLanguage(remembered);
+    else syncHaqLanguageFromSite();
+  }, 700);
+  const initiallyActive = document.querySelector('.lang-card.active')?.dataset.lang;
+  const initialCode = window.__gramConnectLanguage || (initiallyActive === 'hi' ? 'hi' : (document.documentElement.lang || 'en').toLowerCase());
+  applyHaqLanguage(initialCode === 'hi' ? 'hi' : 'en');
 
 </script>
 </body>
