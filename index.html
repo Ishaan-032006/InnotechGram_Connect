@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -198,6 +199,20 @@
     .nb { font-size: 13px; padding: .5rem .45rem; }
     #landing-nav { gap: .05rem; }
   }
+
+  /* Haq Meter: self-contained eligibility checker */
+  .haq-shell{background:linear-gradient(135deg,#f0fdf4,#f8fafc 55%,#ecfdf5);min-height:100vh}
+  .haq-card{background:#fff;border:1px solid #dbe7df;border-radius:1.25rem;box-shadow:0 12px 35px rgba(15,60,35,.08)}
+  .haq-label{display:block;font-size:.9rem;font-weight:700;color:#334155;margin-bottom:.4rem}
+  .haq-input{width:100%;border:1px solid #cbd5e1;border-radius:.75rem;padding:.75rem .85rem;background:#fff;color:#0f172a;outline:none}
+  .haq-input:focus{border-color:#16a34a;box-shadow:0 0 0 3px rgba(22,163,74,.12)}
+  .haq-primary{background:#166534;color:white;border-radius:.8rem;padding:.8rem 1.15rem;font-weight:800;transition:.2s}
+  .haq-primary:hover{background:#14532d;transform:translateY(-1px)}
+  .haq-chip{display:inline-flex;align-items:center;gap:.35rem;background:#dcfce7;color:#166534;border-radius:999px;padding:.35rem .7rem;font-size:.78rem;font-weight:800}
+  .haq-result{border:1px solid #d1fae5;background:#f0fdf4;border-radius:1rem;padding:1.1rem}
+  .haq-check{accent-color:#15803d;width:1rem;height:1rem}
+  @media print{body *{visibility:hidden!important}#haq-print-area,#haq-print-area *{visibility:visible!important}#haq-print-area{position:absolute;left:0;top:0;width:100%;padding:1rem!important;background:white!important;box-shadow:none!important}#haq-print-area button,.no-print{display:none!important}.haq-card{box-shadow:none!important;border:1px solid #aaa!important}}
+
 </style>
 </head>
 <body id="app-body" class="page-home text-slate-800 flex flex-col min-h-screen text-size-base">
@@ -293,6 +308,7 @@
 
       <div class="flex flex-wrap justify-center gap-4">
         <button onclick="switchTab('about')" class="bg-emerald-400 hover:bg-emerald-300 text-slate-900 font-bold px-8 py-3.5 rounded-2xl text-base shadow-lg transition"><span data-i18n="hero.start">Get Started</span> <i class="fa-solid fa-arrow-right ml-2"></i></button>
+        <button onclick="switchTab('haq-meter')" class="bg-white text-emerald-900 hover:bg-emerald-50 font-extrabold px-8 py-3.5 rounded-2xl text-base shadow-xl transition"><i class="fa-solid fa-scale-balanced mr-2"></i><span data-i18n="hero.eligibility">Check My Eligibility</span></button>
         <button onclick="speakText(t('hero.overview'))" class="bg-white/10 hover:bg-white/20 border border-white/30 px-8 py-3.5 rounded-2xl text-base transition"><i class="fa-solid fa-volume-high mr-2"></i><span data-i18n="hero.btn3">Play Audio Overview</span></button>
       </div>
     </div>
@@ -395,6 +411,56 @@
     <p id="scheme-count" class="text-sm text-slate-500 mb-6"></p>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="schemes-grid"></div>
     <p id="no-scheme" class="hidden text-center text-sm text-slate-500 py-8" data-i18n="sch.none">No schemes found.</p>
+  </div>
+</section>
+
+<!-- ===================== HAQ METER + APPLY KIT ===================== -->
+<section id="view-haq-meter" class="view-content hidden haq-shell w-full px-4 sm:px-6 lg:px-8 py-10">
+  <div class="max-w-6xl mx-auto space-y-7">
+    <div class="rounded-3xl p-7 sm:p-10 text-white bg-gradient-to-r from-emerald-900 via-green-800 to-teal-700 relative overflow-hidden">
+      <div class="absolute right-5 top-4 opacity-10 text-8xl"><i class="fa-solid fa-scale-balanced"></i></div>
+      <span class="inline-flex rounded-full bg-white/15 border border-white/20 px-3 py-1 text-xs font-bold tracking-wide" data-hm="eyebrow">GRAMCONNECT • PERSONAL SCHEME FINDER</span>
+      <h2 class="text-3xl sm:text-5xl font-extrabold mt-4 mb-3" data-hm="title">Haq Meter</h2>
+      <p class="max-w-2xl text-emerald-50" data-hm="subtitle">Answer a few simple questions to discover government schemes that may be relevant to you, along with benefits, documents, and next steps.</p>
+      <div class="flex flex-wrap gap-3 mt-5"><span class="haq-chip"><i class="fa-solid fa-check"></i> <span data-hm="simple">Simple questions</span></span><span class="haq-chip"><i class="fa-solid fa-file-lines"></i> <span data-hm="applyKit">Apply Kit</span></span><span class="haq-chip"><i class="fa-solid fa-print"></i> <span data-hm="printPdf">Print / Save PDF</span></span></div>
+    </div>
+
+    <div class="grid lg:grid-cols-[.9fr_1.1fr] gap-6 items-start">
+      <form id="haq-form" class="haq-card p-5 sm:p-7 space-y-5" onsubmit="event.preventDefault(); runHaqMeter();">
+        <div><h3 class="text-2xl font-extrabold text-slate-900" data-hm="aboutYou">About you</h3><p class="text-sm text-slate-500 mt-1" data-hm="demoNote">This is an indicative demo match. The official portal or department must confirm final eligibility.</p></div>
+        <div class="grid sm:grid-cols-2 gap-4">
+          <label><span class="haq-label" data-hm="nameLabel">Name (optional)</span><input id="hm-name" class="haq-input" placeholder="e.g., Ramesh" data-hm-placeholder="namePlaceholder"></label>
+          <label><span class="haq-label" data-hm="ageLabel">Your age</span><input id="hm-age" type="number" min="1" max="120" required class="haq-input" placeholder="Enter age"></label>
+          <label><span class="haq-label" data-hm="genderLabel">Gender</span><select id="hm-gender" class="haq-input" required><option value="">Select gender</option><option value="female">Female</option><option value="male">Male</option><option value="other">Other</option><option value="not-say">Prefer not to say</option></select></label>
+          <label><span class="haq-label" data-hm="stateLabel">State / Union Territory</span><select id="hm-state" class="haq-input" required><option value="" data-hm="chooseState">Select your state</option><option>Uttar Pradesh</option><option>Bihar</option><option>Madhya Pradesh</option><option>Rajasthan</option><option>Haryana</option><option>Uttarakhand</option><option>Jharkhand</option><option>Chhattisgarh</option><option>Maharashtra</option><option>Other</option></select></label>
+          <label><span class="haq-label" data-hm="categoryLabel">What best describes your need?</span><select id="hm-category" class="haq-input" required><option value="" data-hm="chooseCategory">Select a category</option><option value="farmer" data-hm="farmer">Farmer / agriculture</option><option value="worker" data-hm="worker">Employment / wage work</option><option value="family" data-hm="family">Family / housing support</option><option value="student" data-hm="student">Student / education</option><option value="health" data-hm="health">Healthcare support</option></select></label>
+          <label><span class="haq-label" data-hm="socialLabel">Social category (optional)</span><select id="hm-caste" class="haq-input"><option value="not-say" data-hm="preferNot">Prefer not to say</option><option value="general">General</option><option value="obc">OBC</option><option value="sc-st">SC / ST</option><option value="other" data-hm="other">Other</option></select></label>
+          <label><span class="haq-label" data-hm="incomeLabel">Annual household income</span><select id="hm-income" class="haq-input"><option value="100000" data-hm="income1">Below ₹1 lakh</option><option value="200000" selected data-hm="income2">₹1–2 lakh</option><option value="300000" data-hm="income3">₹2–3 lakh</option><option value="500000" data-hm="income4">₹3–5 lakh</option><option value="800000" data-hm="income5">Above ₹5 lakh</option></select></label>
+          <label><span class="haq-label" data-hm="landLabel">Agricultural land (acres, if applicable)</span><select id="hm-land" class="haq-input"><option value="0" data-hm="noLand">No land</option><option value="1" data-hm="land1">Less than 1 acre</option><option value="2" selected data-hm="land2">1–2 acres</option><option value="5" data-hm="land5">More than 2 acres</option></select></label>
+        </div>
+        <label class="flex gap-3 items-start text-sm text-slate-600"><input id="hm-ration" type="checkbox" class="haq-check mt-1"><span data-hm="rationText">I have a ration card (may be relevant for some health or household schemes).</span></label>
+        <label class="flex gap-3 items-start text-sm text-slate-600"><input id="hm-land-doc" type="checkbox" class="haq-check mt-1"><span data-hm="landDocText">I have land ownership / land record documents.</span></label>
+        <div class="flex flex-wrap gap-3"><button class="haq-primary" type="submit"><i class="fa-solid fa-magnifying-glass mr-2"></i><span data-hm="findButton">Find schemes for me</span></button><button type="button" class="px-4 py-3 rounded-xl border border-slate-300 font-bold" onclick="resetHaqMeter()" data-hm="resetButton">Reset</button></div>
+      </form>
+
+      <div class="space-y-5">
+        <div class="haq-card p-5 sm:p-7">
+          <div class="flex items-center justify-between gap-3 mb-4"><div><h3 class="text-2xl font-extrabold" data-hm="matchesTitle">Your possible matches</h3><p class="text-sm text-slate-500" data-hm="matchesSub">We do not add different scheme benefits into a misleading total.</p></div><div class="text-3xl text-emerald-700"><i class="fa-solid fa-list-check"></i></div></div>
+          <div id="haq-results" class="space-y-4"><div class="text-center py-8 text-slate-500"><i class="fa-solid fa-clipboard-question text-4xl mb-3 text-emerald-600"></i><p data-hm="emptyResults">Complete the form to see relevant schemes and next steps here.</p></div></div>
+        </div>
+        <div id="apply-kit" class="haq-card p-5 sm:p-7 hidden">
+          <div id="haq-print-area">
+            <div class="flex items-start justify-between gap-3 mb-4"><div><span class="haq-chip" data-hm="yourApplyKit">YOUR APPLY KIT</span><h3 class="text-2xl font-extrabold mt-2" data-hm="checklistTitle">Your application checklist</h3><p id="kit-intro" class="text-sm text-slate-600 mt-1"></p></div><i class="fa-solid fa-folder-open text-3xl text-emerald-700 no-print"></i></div>
+            <div id="kit-schemes" class="space-y-4"></div>
+            <div class="mt-5 flex items-center gap-4 rounded-xl border border-slate-200 p-4"><img alt="QR code for myScheme government scheme discovery portal" class="w-24 h-24 border rounded-lg" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIQAAACEAQAAAAB5P74KAAABDElEQVR4nM2WwW1EMQhEH9Hehw62/7LcwVDB5PBzSZSVVnwpCidsiecxtsEVvtt88NP+dqaqmunpvtwdhyiRQERK5B3nASXQQXO5aw6A25X3o17NuBnNTU7MYI5MvOVUCvQ1GNDZ6kliYJjL3XIamkOG01PbfRGDBQFZZHl/SGQhuO7hnqMrQYmw73BkYlsW+3dBiBIrgOQ9R5GEEoF1Y1+WUZwYaa8nCljB8T09jmMZEDfy7GDJseX1eVUaDyB6kG/UeXeLZw3Auj4/MKaEQK7s9VRVZzCHpvf1UAnI9QTLN+p8ifHoNPX+6r9wABrQgcotjmA69XbUy34xiA7Wvi8DkkMcWL+v+mf/lk+DkrcwifNjVQAAAABJRU5ErkJggg=="><div><p class="font-extrabold" data-hm="scanTitle">Scan for more government schemes</p><p class="text-sm text-slate-600" data-hm="scanText">myScheme is the official scheme discovery portal. An internet connection is needed to open it.</p><a href="https://www.myscheme.gov.in/" target="_blank" rel="noopener" class="text-sm text-emerald-800 underline font-bold" data-hm="openMyScheme">Open myScheme</a></div></div>
+            <div class="mt-5 p-4 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-900"><strong data-hm="important">Important:</strong> <span data-hm="disclaimer">This checklist is general guidance, not an application or approval. Confirm current rules and required documents with the official portal, Common Service Centre (CSC), or Gram Panchayat.</span></div>
+          </div>
+          <div class="flex flex-wrap gap-3 mt-5 no-print"><button onclick="window.print()" class="haq-primary"><i class="fa-solid fa-file-pdf mr-2"></i><span data-hm="printButton">Print / Save as PDF</span></button><button onclick="downloadHaqKit()" class="px-4 py-3 rounded-xl border border-emerald-700 text-emerald-800 font-bold"><i class="fa-solid fa-download mr-2"></i><span data-hm="downloadButton">Download checklist</span></button></div>
+        </div>
+      </div>
+    </div>
+    <div class="text-xs text-slate-500 max-w-4xl mx-auto"><strong data-hm="privacyTitle">Privacy:</strong> <span data-hm="privacyText">Your answers are processed in this browser page and are not submitted to a server by this demo form. Matches are indicative and do not guarantee eligibility or benefits.</span></div>
+    <div class="text-center"><button onclick="switchTab('schemes')" class="text-emerald-800 font-bold hover:underline"><i class="fa-solid fa-arrow-left mr-2"></i><span data-hm="allSchemes">View all schemes</span></button></div>
   </div>
 </section>
 
@@ -747,6 +813,7 @@
     "ui.back": "Back to Home",
     "ui.open": "Open →",
     "hero.start": "Get Started",
+    "hero.eligibility": "Check My Eligibility",
     "nb.sub": "Latest announcements from your Gram Panchayat",
 
     "ab.title": "About GramConnect",
@@ -788,6 +855,7 @@
     "ui.back": "होम पर वापस",
     "ui.open": "खोलें →",
     "hero.start": "शुरू करें",
+    "hero.eligibility": "मेरी पात्रता जाँचें",
     "nb.sub": "आपकी ग्राम पंचायत की ताज़ा सूचनाएँ",
 
     "ab.title": "ग्रामकनेक्ट के बारे में",
@@ -835,6 +903,7 @@
         lastLang = v;
         setLang(v);
         markLang(v);
+        if (typeof window.applyHaqLanguage === 'function') window.applyHaqLanguage(v);
         const real = document.getElementById('lang-select');
         if (real) real.value = v;
       } else {
@@ -857,7 +926,7 @@
   /* ---- Page router: every section is its own page (#about, #services, #contact, #auth, #language ...) ---- */
   (function () {
     // 'home' = landing page with the farm photo. 'about' = the Home page (About GramConnect, Mission, Modules)
-    const pages = ['home','about','schemes','agriculture','health','jobs','notices','helpline','services','contact','auth','language','team'];
+    const pages = ['home','about','schemes','haq-meter','agriculture','health','jobs','notices','helpline','services','contact','auth','language','team'];
     const baseSwitch = window.switchTab;      // original function from app.js
 
     function show(name) {
@@ -890,7 +959,107 @@
 
     window.addEventListener('hashchange', () => show(location.hash.slice(1) || 'home'));
     show(location.hash.slice(1) || 'home');
+    if (typeof window.applyHaqLanguage === 'function') window.applyHaqLanguage(document.getElementById('lang-select')?.value || 'en');
   })();
+
+  /* ---- Haq Meter: bilingual English/Hindi demo rules + Apply Kit ---- */
+  const HAQ_COPY = {
+    en: {
+      eyebrow:'GRAMCONNECT • PERSONAL SCHEME FINDER',title:'Haq Meter',subtitle:'Answer a few simple questions to discover government schemes that may be relevant to you, along with benefits, documents, and next steps.',simple:'Simple questions',applyKit:'Apply Kit',printPdf:'Print / Save PDF',aboutYou:'About you',demoNote:'This is an indicative demo match. The official portal or department must confirm final eligibility.',nameLabel:'Name (optional)',namePlaceholder:'e.g., Ramesh',ageLabel:'Your age',genderLabel:'Gender',stateLabel:'State / Union Territory',chooseState:'Select your state',categoryLabel:'What best describes your need?',chooseCategory:'Select a category',farmer:'Farmer / agriculture',worker:'Employment / wage work',family:'Family / housing support',student:'Student / education',health:'Healthcare support',socialLabel:'Social category (optional)',preferNot:'Prefer not to say',other:'Other',incomeLabel:'Annual household income',income1:'Below ₹1 lakh',income2:'₹1–2 lakh',income3:'₹2–3 lakh',income4:'₹3–5 lakh',income5:'Above ₹5 lakh',landLabel:'Agricultural land (acres, if applicable)',noLand:'No land',land1:'Less than 1 acre',land2:'1–2 acres',land5:'More than 2 acres',rationText:'I have a ration card (may be relevant for some health or household schemes).',landDocText:'I have land ownership / land record documents.',findButton:'Find schemes for me',resetButton:'Reset',matchesTitle:'Your possible matches',matchesSub:'We do not add different scheme benefits into a misleading total.',emptyResults:'Complete the form to see relevant schemes and next steps here.',yourApplyKit:'YOUR APPLY KIT',checklistTitle:'Your application checklist',scanTitle:'Scan for more government schemes',scanText:'myScheme is the official scheme discovery portal. An internet connection is needed to open it.',openMyScheme:'Open myScheme',important:'Important:',disclaimer:'This checklist is general guidance, not an application or approval. Confirm current rules and required documents with the official portal, Common Service Centre (CSC), or Gram Panchayat.',printButton:'Print / Save as PDF',downloadButton:'Download checklist',privacyTitle:'Privacy:',privacyText:'Your answers are processed in this browser page and are not submitted to a server by this demo form. Matches are indicative and do not guarantee eligibility or benefits.',allSchemes:'View all schemes',selectAgeGenderState:'Please enter your age, select gender, state, and main category.',possible:'Possible match',official:'Official website',documents:'Documents to check',clearNo:'No clear match was found yet.',noDoesNotMean:'This does not mean you are ineligible. Check all schemes or ask a CSC / Gram Panchayat for help.',matchFound:'possible scheme match(es) found',verify:'Final eligibility must be verified.',adultWoman:'Ujjwala eligibility usually requires an eligible adult woman applicant.',kitIntro:'Applicant details and possible matches. Tick documents as you collect them.',reminder:'Reminder: Scheme eligibility and document requirements must be confirmed through the official portal or department.',below18:'Some schemes have minimum-age or adult-applicant requirements. Check the official rules carefully.'
+    },
+    hi: {
+      eyebrow:'GRAMCONNECT • सरकारी योजनाएँ खोजें',title:'हक़ मीटर',subtitle:'कुछ आसान सवालों के जवाब दें और अपने लिए उपयोगी सरकारी योजनाएँ, लाभ, दस्तावेज़ और अगले कदम जानें।',simple:'आसान सवाल',applyKit:'आवेदन किट',printPdf:'प्रिंट / PDF सेव करें',aboutYou:'आपके बारे में',demoNote:'यह शुरुआती अनुमान है। अंतिम पात्रता की पुष्टि आधिकारिक पोर्टल या विभाग करेगा।',nameLabel:'नाम (ज़रूरी नहीं)',namePlaceholder:'जैसे, रमेश',ageLabel:'आपकी उम्र',genderLabel:'लिंग',stateLabel:'राज्य / केंद्र शासित प्रदेश',chooseState:'अपना राज्य चुनें',categoryLabel:'आपको किस तरह की मदद चाहिए?',chooseCategory:'श्रेणी चुनें',farmer:'किसान / खेती',worker:'रोज़गार / मज़दूरी',family:'परिवार / आवास सहायता',student:'विद्यार्थी / शिक्षा',health:'स्वास्थ्य सहायता',socialLabel:'सामाजिक श्रेणी (ज़रूरी नहीं)',preferNot:'बताना नहीं चाहते',other:'अन्य',incomeLabel:'परिवार की सालाना आय',income1:'₹1 लाख से कम',income2:'₹1–2 लाख',income3:'₹2–3 लाख',income4:'₹3–5 लाख',income5:'₹5 लाख से अधिक',landLabel:'खेती की ज़मीन (एकड़, यदि लागू हो)',noLand:'ज़मीन नहीं',land1:'1 एकड़ से कम',land2:'1–2 एकड़',land5:'2 एकड़ से अधिक',rationText:'मेरे पास राशन कार्ड है (कुछ स्वास्थ्य या परिवार योजनाओं में उपयोगी हो सकता है)।',landDocText:'मेरे पास ज़मीन / खसरा-खतौनी के दस्तावेज़ हैं।',findButton:'मेरे लिए योजनाएँ खोजें',resetButton:'रीसेट करें',matchesTitle:'आपके संभावित विकल्प',matchesSub:'अलग-अलग योजनाओं के लाभ जोड़कर भ्रामक कुल नहीं दिखाया जाता।',emptyResults:'संबंधित योजनाएँ और अगले कदम देखने के लिए फ़ॉर्म भरें।',yourApplyKit:'आपकी आवेदन किट',checklistTitle:'आपकी आवेदन चेकलिस्ट',scanTitle:'और सरकारी योजनाएँ खोजें',scanText:'myScheme सरकारी योजनाएँ खोजने का आधिकारिक पोर्टल है। इसे खोलने के लिए इंटरनेट चाहिए।',openMyScheme:'myScheme खोलें',important:'ज़रूरी सूचना:',disclaimer:'यह चेकलिस्ट सामान्य मार्गदर्शन है, आवेदन या मंज़ूरी नहीं। मौजूदा नियम और दस्तावेज़ आधिकारिक पोर्टल, CSC या ग्राम पंचायत से पक्का करें।',printButton:'प्रिंट / PDF सेव करें',downloadButton:'चेकलिस्ट डाउनलोड करें',privacyTitle:'गोपनीयता:',privacyText:'आपके जवाब इसी ब्राउज़र में प्रोसेस होते हैं और यह डेमो फ़ॉर्म उन्हें सर्वर पर नहीं भेजता। मिलान केवल अनुमान है; पात्रता या लाभ की गारंटी नहीं।',allSchemes:'सभी योजनाएँ देखें',selectAgeGenderState:'कृपया उम्र भरें और लिंग, राज्य व मुख्य श्रेणी चुनें।',possible:'संभावित विकल्प',official:'आधिकारिक वेबसाइट',documents:'जाँचने वाले दस्तावेज़',clearNo:'अभी कोई स्पष्ट मिलान नहीं मिला।',noDoesNotMean:'इसका मतलब यह नहीं कि आप अपात्र हैं। सभी योजनाएँ देखें या CSC / ग्राम पंचायत से मदद लें।',matchFound:'संभावित योजना विकल्प मिले',verify:'अंतिम पात्रता की पुष्टि ज़रूरी है।',adultWoman:'उज्ज्वला के लिए आम तौर पर पात्र वयस्क महिला आवेदक की ज़रूरत होती है।',kitIntro:'आवेदक की जानकारी और संभावित योजनाएँ। दस्तावेज़ जुटाने पर टिक करें।',reminder:'याद रखें: योजना की पात्रता और दस्तावेज़ आधिकारिक पोर्टल या विभाग से पक्के करें।',below18:'कुछ योजनाओं में न्यूनतम उम्र या वयस्क आवेदक की शर्त होती है। आधिकारिक नियम ध्यान से जाँचें।'
+    }
+  };
+  let haqLang = 'en';
+  function htxt(key){ return (HAQ_COPY[haqLang] && HAQ_COPY[haqLang][key]) || HAQ_COPY.en[key] || key; }
+  function applyHaqLanguage(code){
+    haqLang = code === 'hi' ? 'hi' : 'en';
+    document.querySelectorAll('#view-haq-meter [data-hm]').forEach(el => { const key=el.getAttribute('data-hm'); if(HAQ_COPY[haqLang][key]) el.textContent=HAQ_COPY[haqLang][key]; });
+    const ph=document.querySelector('#view-haq-meter [data-hm-placeholder]'); if(ph) ph.placeholder=htxt(ph.dataset.hmPlaceholder);
+    const gender=document.getElementById('hm-gender'); if(gender){ const vals={en:['Select gender','Female','Male','Other','Prefer not to say'],hi:['लिंग चुनें','महिला','पुरुष','अन्य','बताना नहीं चाहते']}[haqLang]; [...gender.options].forEach((o,i)=>o.textContent=vals[i]||o.textContent); }
+    // Translate every control inside the About You form, including options and placeholders.
+    const age=document.getElementById('hm-age'); if(age) age.placeholder=haqLang==='hi'?'उम्र दर्ज करें':'Enter age';
+    const state=document.getElementById('hm-state'); if(state){
+      const vals={en:['Select your state','Uttar Pradesh','Bihar','Madhya Pradesh','Rajasthan','Haryana','Uttarakhand','Jharkhand','Chhattisgarh','Maharashtra','Other'],hi:['अपना राज्य चुनें','उत्तर प्रदेश','बिहार','मध्य प्रदेश','राजस्थान','हरियाणा','उत्तराखंड','झारखंड','छत्तीसगढ़','महाराष्ट्र','अन्य']}[haqLang];
+      [...state.options].forEach((o,i)=>{o.textContent=vals[i]||o.textContent;});
+    }
+    const caste=document.getElementById('hm-caste'); if(caste){
+      const vals={en:['Prefer not to say','General','OBC','SC / ST','Other'],hi:['बताना नहीं चाहते','सामान्य','अन्य पिछड़ा वर्ग (OBC)','अनुसूचित जाति / जनजाति (SC / ST)','अन्य']}[haqLang];
+      [...caste.options].forEach((o,i)=>o.textContent=vals[i]||o.textContent);
+    }
+    const income=document.getElementById('hm-income'); if(income){
+      const vals={en:['Below ₹1 lakh','₹1–2 lakh','₹2–3 lakh','₹3–5 lakh','Above ₹5 lakh'],hi:['₹1 लाख से कम','₹1–2 लाख','₹2–3 लाख','₹3–5 लाख','₹5 लाख से अधिक']}[haqLang];
+      [...income.options].forEach((o,i)=>o.textContent=vals[i]||o.textContent);
+    }
+    const land=document.getElementById('hm-land'); if(land){
+      const vals={en:['No land','Less than 1 acre','1–2 acres','More than 2 acres'],hi:['ज़मीन नहीं','1 एकड़ से कम','1–2 एकड़','2 एकड़ से अधिक']}[haqLang];
+      [...land.options].forEach((o,i)=>o.textContent=vals[i]||o.textContent);
+    }
+    // Translate the visible generated results and checklist too when the language changes.
+    if(document.getElementById('haq-results')?.dataset.generated==='yes') runHaqMeter(false);
+  }
+  const HAQ_SCHEMES = [
+    {id:'pmkisan',name:'PM-Kisan Samman Nidhi',group:'farmer',benefit:'Eligible landholding farmer families may receive ₹6,000 per year in three instalments.',benefitHi:'पात्र ज़मीनधारक किसान परिवारों को सालाना ₹6,000 तीन किस्तों में मिल सकते हैं।',docs:['Aadhaar','Bank account / passbook','Land record','Aadhaar-linked mobile, if required'],url:'https://pmkisan.gov.in/',match:d=>d.category==='farmer' && d.land>0,note:'Land records, exclusions, and e-KYC conditions apply.',noteHi:'ज़मीन के रिकॉर्ड, अपवर्जन और e-KYC की शर्तें लागू होती हैं।'},
+    {id:'pmfby',name:'Pradhan Mantri Fasal Bima Yojana',group:'farmer',benefit:'Crop-loss insurance may be available under notified crop, area, and policy conditions; payment is not guaranteed.',benefitHi:'अधिसूचित फसल, क्षेत्र और पॉलिसी की शर्तों के अनुसार फसल बीमा मिल सकता है; भुगतान की गारंटी नहीं है।',docs:['Aadhaar / ID','Bank details','Land or tenancy documents, if applicable','Sown crop details'],url:'https://pmfby.gov.in/',match:d=>d.category==='farmer' && d.land>0,note:'Check enrollment windows, notified crops/areas, and loss-reporting deadlines.',noteHi:'नामांकन की तारीखें, अधिसूचित फसल/क्षेत्र और नुकसान की सूचना देने की समय-सीमा जाँचें।'},
+    {id:'ayushman',name:'Ayushman Bharat PM-JAY',group:'health',benefit:'Eligible families may receive cashless secondary and tertiary hospitalization cover up to ₹5 lakh per family per year at empanelled hospitals.',benefitHi:'पात्र परिवारों को सूचीबद्ध अस्पतालों में प्रति परिवार प्रति वर्ष ₹5 लाख तक कैशलेस अस्पताल उपचार कवर मिल सकता है।',docs:['Aadhaar or accepted ID','Ration / family record, if requested','Eligibility verification details'],url:'https://beneficiary.nha.gov.in/',match:d=>d.category==='health' || d.ration || d.income<=200000,note:'Only listed eligible beneficiaries qualify; income alone does not confirm eligibility.',noteHi:'केवल सूचीबद्ध पात्र लाभार्थी योग्य होते हैं; केवल आय से पात्रता तय नहीं होती।'},
+    {id:'mgnrega',name:'MGNREGA rural employment',group:'worker',benefit:'Rural households can request unskilled manual work, with a statutory guarantee of up to 100 days per financial year for eligible households.',benefitHi:'ग्रामीण परिवार काम की माँग कर सकते हैं; पात्र परिवारों के लिए वित्तीय वर्ष में 100 दिन तक काम की वैधानिक गारंटी है।',docs:['Job card','Aadhaar / ID as locally required','Bank or post-office account details'],url:'https://nrega.nic.in/',match:d=>d.category==='worker' || d.category==='family',note:'A job card and local Gram Panchayat process are required.',noteHi:'जॉब कार्ड और स्थानीय ग्राम पंचायत की प्रक्रिया ज़रूरी है।'},
+    {id:'ujjwala',name:'Pradhan Mantri Ujjwala Yojana',group:'family',benefit:'Eligible adult women may receive support for an LPG connection under current rules.',benefitHi:'मौजूदा नियमों के अनुसार पात्र वयस्क महिलाओं को LPG कनेक्शन के लिए सहायता मिल सकती है।',docs:['Applicant Aadhaar','Ration card / family composition proof','Bank account details','Other required declarations or forms'],url:'https://www.pmuy.gov.in/',match:d=>(d.category==='family'||d.category==='health') && d.income<=300000 && d.gender==='female' && d.age>=18,note:'Household eligibility, existing LPG connections, and current guidelines must be checked.',noteHi:'परिवार की पात्रता, मौजूदा LPG कनेक्शन और वर्तमान दिशा-निर्देश जाँचें।'},
+    {id:'pmayg',name:'Pradhan Mantri Awaas Yojana–Gramin',group:'family',benefit:'Eligible rural households may receive assistance to build a pucca house under approved norms.',benefitHi:'पात्र ग्रामीण परिवारों को तय नियमों के अनुसार पक्का घर बनाने के लिए सहायता मिल सकती है।',docs:['Aadhaar / identity proof','Rural housing eligibility records','Bank account','Land or site details, if applicable'],url:'https://pmayg.nic.in/',match:d=>(d.category==='family'||d.category==='worker') && d.income<=200000,note:'Selection depends on official deprivation, waiting-list, and verification criteria.',noteHi:'चयन आधिकारिक वंचना, प्रतीक्षा-सूची और सत्यापन के मानदंडों पर निर्भर करता है।'},
+    {id:'scholarship',name:'National Scholarship Portal',group:'student',benefit:'Eligible students may apply for scheme-specific scholarships; amounts depend on the course, category, and scheme.',benefitHi:'पात्र विद्यार्थी अलग-अलग छात्रवृत्ति योजनाओं के लिए आवेदन कर सकते हैं; राशि पाठ्यक्रम, श्रेणी और योजना पर निर्भर करती है।',docs:['Student ID / Aadhaar as required','Income certificate','Caste certificate, if applicable','Mark sheets','Bank details'],url:'https://scholarships.gov.in/',match:d=>d.category==='student',note:'Eligibility varies by class/course, marks, institution, and individual scheme.',noteHi:'पात्रता कक्षा/पाठ्यक्रम, अंक, संस्थान और संबंधित योजना के अनुसार बदलती है।'}
+  ];
+  const HAQ_DOCS_HI = {
+    'Aadhaar':'आधार कार्ड','Bank account / passbook':'बैंक खाता / पासबुक','Land record':'ज़मीन का रिकॉर्ड','Aadhaar-linked mobile, if required':'आवश्यक होने पर आधार से जुड़ा मोबाइल नंबर',
+    'Aadhaar / ID':'आधार कार्ड / पहचान पत्र','Bank details':'बैंक विवरण','Land or tenancy documents, if applicable':'ज़रूरत होने पर ज़मीन या किरायेदारी के दस्तावेज़','Sown crop details':'बोई गई फसल का विवरण',
+    'Aadhaar or accepted ID':'आधार कार्ड या मान्य पहचान पत्र','Ration / family record, if requested':'माँगे जाने पर राशन कार्ड / परिवार का रिकॉर्ड','Eligibility verification details':'पात्रता सत्यापन का विवरण',
+    'Job card':'जॉब कार्ड','Aadhaar / ID as locally required':'स्थानीय नियमों के अनुसार आधार / पहचान पत्र','Bank or post-office account details':'बैंक या डाकघर खाते का विवरण',
+    'Applicant Aadhaar':'आवेदक का आधार कार्ड','Ration card / family composition proof':'राशन कार्ड / परिवार के सदस्यों का प्रमाण','Other required declarations or forms':'अन्य आवश्यक घोषणाएँ या फ़ॉर्म',
+    'Aadhaar / identity proof':'आधार कार्ड / पहचान प्रमाण','Rural housing eligibility records':'ग्रामीण आवास पात्रता रिकॉर्ड','Bank account':'बैंक खाता','Land or site details, if applicable':'ज़रूरत होने पर ज़मीन या जगह का विवरण',
+    'Student ID / Aadhaar as required':'विद्यार्थी पहचान पत्र / आवश्यकतानुसार आधार','Income certificate':'आय प्रमाण पत्र','Caste certificate, if applicable':'ज़रूरत होने पर जाति प्रमाण पत्र','Mark sheets':'अंकसूचियाँ','Bank details':'बैंक विवरण'
+  };
+  function haqDoc(doc){ return haqLang==='hi' ? (HAQ_DOCS_HI[doc] || doc) : doc; }
+
+  function runHaqMeter(updateOnly=true){
+    const d={name:document.getElementById('hm-name').value.trim(),age:Number(document.getElementById('hm-age').value),gender:document.getElementById('hm-gender').value,state:document.getElementById('hm-state').value,category:document.getElementById('hm-category').value,caste:document.getElementById('hm-caste').value,income:Number(document.getElementById('hm-income').value),land:Number(document.getElementById('hm-land').value),ration:document.getElementById('hm-ration').checked,landDoc:document.getElementById('hm-land-doc').checked};
+    if(!d.age||d.age<1||d.age>120||!d.gender||!d.state||!d.category){if(updateOnly) alert(htxt('selectAgeGenderState'));return;}
+    const found=HAQ_SCHEMES.filter(x=>x.match(d));
+    const results=document.getElementById('haq-results'); results.dataset.generated='yes';
+    if(!found.length){results.innerHTML=`<div class="rounded-xl bg-amber-50 border border-amber-200 p-4 text-amber-900"><strong>${htxt('clearNo')}</strong><p class="text-sm mt-1">${htxt('noDoesNotMean')}</p><a class="underline font-bold" href="https://www.myscheme.gov.in/" target="_blank" rel="noopener">myScheme official discovery portal</a>${d.age<18?`<p class="text-sm mt-2">${htxt('below18')}</p>`:''}</div>`;document.getElementById('apply-kit').classList.add('hidden');return;}
+    results.innerHTML=`<div class="flex items-center gap-3 p-3 rounded-xl bg-emerald-50 border border-emerald-100"><div class="text-2xl font-extrabold text-emerald-800">${found.length}</div><div><strong>${found.length} ${htxt('matchFound')}${d.name?', '+escapeHaq(d.name):''}!</strong><p class="text-xs text-slate-600">${escapeHaq(d.state)} • ${htxt('verify')}</p></div></div>`+found.map(x=>`<article class="haq-result"><div class="flex items-start justify-between gap-3"><h4 class="font-extrabold text-lg text-slate-900">${x.name}</h4><span class="haq-chip">${htxt('possible')}</span></div><p class="text-sm text-slate-700 mt-2">${haqLang==='hi'?x.benefitHi:x.benefit}</p><p class="text-xs text-slate-500 mt-2"><i class="fa-solid fa-circle-info mr-1"></i>${haqLang==='hi'?x.noteHi:x.note}</p><a href="${x.url}" target="_blank" rel="noopener" class="inline-flex mt-3 text-sm font-bold text-emerald-800 underline">${htxt('official')} <i class="fa-solid fa-arrow-up-right-from-square ml-2 mt-1"></i></a></article>`).join('');
+    document.getElementById('kit-intro').textContent=`${d.name||(haqLang==='hi'?'आवेदक':'Applicant')} • ${haqLang==='hi'?'उम्र':'Age'}: ${d.age} • ${haqLang==='hi'?({'Uttar Pradesh':'उत्तर प्रदेश','Bihar':'बिहार','Madhya Pradesh':'मध्य प्रदेश','Rajasthan':'राजस्थान','Haryana':'हरियाणा','Uttarakhand':'उत्तराखंड','Jharkhand':'झारखंड','Chhattisgarh':'छत्तीसगढ़','Maharashtra':'महाराष्ट्र','Other':'अन्य'}[d.state]||d.state):d.state} • ${found.length} ${htxt('matchFound')}.`;
+    document.getElementById('kit-schemes').innerHTML=found.map(x=>`<div class="border border-slate-200 rounded-xl p-4"><h4 class="font-extrabold text-slate-900 mb-2">${x.name}</h4><p class="text-sm text-slate-600 mb-3">${haqLang==='hi'?x.benefitHi:x.benefit}</p><p class="text-sm font-bold mb-2">${htxt('documents')}</p><div class="grid sm:grid-cols-2 gap-2">${x.docs.map(doc=>`<label class="flex items-start gap-2 text-sm text-slate-700"><input class="haq-check mt-1" type="checkbox"><span>${haqDoc(doc)}</span></label>`).join('')}</div><p class="text-xs text-slate-500 mt-3">${htxt('official')}: <a class="underline text-emerald-800 break-all" href="${x.url}" target="_blank" rel="noopener">${x.url}</a></p></div>`).join('');
+    document.getElementById('apply-kit').classList.remove('hidden');
+  }
+  function resetHaqMeter(){document.getElementById('haq-form').reset();const r=document.getElementById('haq-results');r.dataset.generated='';r.innerHTML=`<div class="text-center py-8 text-slate-500"><i class="fa-solid fa-clipboard-question text-4xl mb-3 text-emerald-600"></i><p>${htxt('emptyResults')}</p></div>`;document.getElementById('apply-kit').classList.add('hidden');}
+  function escapeHaq(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+  function downloadHaqKit(){const area=document.getElementById('haq-print-area');const plain=area.innerText+'\n\n'+htxt('reminder');const blob=new Blob([plain],{type:'text/plain;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='GramConnect-Apply-Kit.txt';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(a.href);}
+  window.applyHaqLanguage = applyHaqLanguage;
+  // Keep Haq Meter synced with the site's selected language, including language-card changes.
+  document.getElementById('lang-select')?.addEventListener('change', function(){ applyHaqLanguage(this.value); });
+  document.querySelectorAll('.lang-card').forEach(card => card.addEventListener('click', () => {
+    const code = card.dataset.lang;
+    if (code === 'en' || code === 'hi') setTimeout(() => applyHaqLanguage(code), 0);
+  }));
+
+  // Robustly sync Haq Meter with the site's actual selected language.
+  // The main site changes language through pickLang()/setLang(), so the hidden
+  // select's value alone may be stale. Read the active language card as well.
+  function syncHaqLanguageFromSite(){
+    const activeCard = document.querySelector('.lang-card.active');
+    const selectValue = document.getElementById('lang-select')?.value;
+    const htmlLang = (document.documentElement.lang || '').toLowerCase();
+    const code = activeCard?.dataset.lang || selectValue || htmlLang || 'en';
+    if (code === 'hi' || code === 'en') applyHaqLanguage(code);
+  }
+  const langPage = document.querySelector('#view-language') || document.querySelector('[data-page="language"]');
+  if (typeof MutationObserver !== 'undefined') {
+    const langObserver = new MutationObserver(syncHaqLanguageFromSite);
+    document.querySelectorAll('.lang-card').forEach(card => langObserver.observe(card, {attributes:true, attributeFilter:['class']}));
+  }
+  // Also catches language changes performed programmatically by the main app.
+  setInterval(syncHaqLanguageFromSite, 400);
+  syncHaqLanguageFromSite();
+
 </script>
 </body>
 </html>
