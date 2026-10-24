@@ -167,6 +167,7 @@ function switchTab(name){
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   const btn=document.getElementById('tab-btn-'+name); if(btn) btn.classList.add('active');
   if(name==='admin') renderAdminUsers();
+  if(name==='profile') renderDashboard();
   window.scrollTo({top:0,behavior:'smooth'});
 }
 function updateToggleLabels(){
@@ -256,7 +257,7 @@ function switchAuth(mode) {            // 'login' | 'register' | 'profile'
 async function handleRegister() {
   const name = document.getElementById('reg-name').value.trim();
   const mobile = document.getElementById('reg-mobile').value.trim();
-  const language = document.getElementById('reg-language').value;
+  const language = (typeof currentLang !== 'undefined' && currentLang) || 'en';
   const pwd = document.getElementById('reg-password').value;
   const confirm = document.getElementById('reg-confirm').value;
   const consent = document.getElementById('reg-consent').checked;
@@ -291,6 +292,7 @@ async function handleRegister() {
 function initProfileForm() {
   const st = document.getElementById('pf-state');
   st.innerHTML = '<option value="">State</option>' + STATES.map(s => `<option>${s}</option>`).join('');
+  st.addEventListener('change', () => updateDistrictOptions());
   const box = document.getElementById('pf-crops');
   box.innerHTML = '';
   CROPS.forEach(c => {
@@ -303,6 +305,74 @@ function initProfileForm() {
   });
 }
 
+/* ---------- searchable district (depends on state) ---------- */
+function districtsFor(state) { return (typeof DISTRICTS !== 'undefined' && DISTRICTS[state]) || []; }
+function canonicalDistrict(state, typed) {          // match typed text to the official spelling, ignoring case
+  const t0 = (typed || '').trim().toLowerCase();
+  return districtsFor(state).find(d => d.toLowerCase() === t0) || (typed || '').trim();
+}
+function updateDistrictOptions(selected) {
+  const state = document.getElementById('pf-state').value;
+  const input = document.getElementById('pf-district');
+  const dl = document.getElementById('pf-district-list');
+  dl.innerHTML = '';
+  districtsFor(state).forEach(d => { const o = document.createElement('option'); o.value = d; dl.appendChild(o); });
+  input.placeholder = state ? 'District / ज़िला (type to search / लिखकर खोजें)' : 'Select state first / पहले राज्य चुनें';
+  input.value = selected || '';
+}
+function onDistrictChange() {}
+function getDistrictValue() {
+  return canonicalDistrict(document.getElementById('pf-state').value, document.getElementById('pf-district').value);
+}
+
+/* ---------- dashboard (My Profile page) ---------- */
+function renderDashboard() {
+  const user = currentUser();
+  document.getElementById('dash-guest').classList.toggle('hidden', !!user);
+  document.getElementById('dash-user').classList.toggle('hidden', !user);
+  if (!user) return;
+  const p = user.profile || {};
+  document.getElementById('dash-name').textContent = user.name;
+  document.getElementById('dash-mobile').textContent = '+91 ' + user.mobile;
+
+  const isFarmer = p.occupation === 'farmer';
+  const checks = [p.state, p.district, p.village, p.occupation, p.gender, p.ageGroup, p.category, p.income, p.familySize];
+  if (isFarmer) checks.push(p.landAcres, (p.crops || []).length ? 'x' : '');
+  const done = checks.filter(x => x !== undefined && x !== null && x !== '').length;
+  const pct = Math.round(done * 100 / checks.length);
+  document.getElementById('dash-pct').textContent = pct + '%';
+  document.getElementById('dash-bar').style.width = pct + '%';
+
+  const yn = b => b ? 'Yes / हाँ' : 'No / नहीं';
+  const OCC = { farmer: 'Farmer / किसान', laborer: 'Labourer / मज़दूर', artisan: 'Artisan or small business', shg: 'Self Help Group member', student: 'Student / विद्यार्थी', other: 'Other / अन्य' };
+  const cards = [
+    ['Location / स्थान', 'fa-location-dot', [['State', p.state], ['District', p.district], ['Village', p.village]]],
+    ['Work / काम', 'fa-wheat-awn', [['Occupation', OCC[p.occupation] || p.occupation]]
+      .concat(isFarmer ? [['Land (acres)', p.landAcres], ['Main crops', (p.crops || []).join(', ')]] : [])],
+    ['Family and eligibility / परिवार', 'fa-people-roof', [['Gender', p.gender], ['Age group', p.ageGroup], ['Category', p.category], ['Yearly income', p.income], ['Family members', p.familySize], ['Ration card', p.state ? yn(p.hasRationCard) : ''], ['Bank account', p.state ? yn(p.hasBankAccount) : '']]]
+  ];
+  const grid = document.getElementById('dash-grid');
+  grid.innerHTML = '';
+  cards.forEach(([title, icon, rows]) => {
+    const card = document.createElement('div');
+    card.className = 'bg-white rounded-2xl border border-slate-200 p-6';
+    const h = document.createElement('h4');
+    h.className = 'font-bold text-slate-900 mb-4';
+    const i = document.createElement('i'); i.className = 'fa-solid ' + icon + ' text-emerald-600 mr-2';
+    h.appendChild(i); h.appendChild(document.createTextNode(title));
+    card.appendChild(h);
+    rows.forEach(([k, v]) => {
+      const row = document.createElement('div');
+      row.className = 'flex justify-between gap-4 py-2 border-t border-slate-100 text-sm';
+      const a1 = document.createElement('span'); a1.className = 'text-slate-500'; a1.textContent = k;
+      const a2 = document.createElement('span'); a2.className = 'font-medium text-slate-800 text-right';
+      a2.textContent = (v === undefined || v === null || v === '') ? '-' : String(v);
+      row.appendChild(a1); row.appendChild(a2); card.appendChild(row);
+    });
+    grid.appendChild(card);
+  });
+}
+
 function toggleFarmFields() {
   document.getElementById('pf-farm').classList.toggle('hidden',
     document.getElementById('pf-occupation').value !== 'farmer');
@@ -311,7 +381,7 @@ function toggleFarmFields() {
 function prefillProfile() {
   const p = (currentUser() || {}).profile || {};
   const set = (id, v) => { document.getElementById(id).value = v ?? ''; };
-  set('pf-state', p.state); set('pf-district', p.district); set('pf-village', p.village);
+  set('pf-state', p.state); updateDistrictOptions(p.district); set('pf-village', p.village);
   set('pf-occupation', p.occupation); set('pf-land', p.landAcres);
   set('pf-gender', p.gender); set('pf-age', p.ageGroup); set('pf-category', p.category);
   set('pf-income', p.income); set('pf-family', p.familySize);
@@ -334,10 +404,11 @@ function saveProfile() {
   const v = id => document.getElementById(id).value.trim();
   const isFarmer = v('pf-occupation') === 'farmer';
 
-  if (!v('pf-state') || !v('pf-district')) return showAuthError('State and district are required to show your local mandi and hospitals. / राज्य और ज़िला ज़रूरी हैं।');
+  const district = getDistrictValue();
+  if (!v('pf-state') || !district) return showAuthError('State and district are required to show your local mandi and hospitals. / राज्य और ज़िला ज़रूरी हैं।');
 
   users[mobile].profile = {
-    state: v('pf-state'), district: v('pf-district'), village: v('pf-village'),
+    state: v('pf-state'), district, village: v('pf-village'),
     occupation: v('pf-occupation'),
     landAcres: isFarmer && v('pf-land') ? Number(v('pf-land')) : null,
     crops: isFarmer ? [...document.querySelectorAll('.pf-crop:checked')].map(c => c.value) : [],
@@ -348,11 +419,12 @@ function saveProfile() {
   };
   users[mobile].profileDone = true;
   saveUsers(users);
-  closeAuth(); updateAuthUI();
+  updateAuthUI();
+  switchTab('profile');
   showQuickAlert('Profile saved. / प्रोफ़ाइल सेव हो गई।');
 }
 
-function skipProfile() { closeAuth(); updateAuthUI(); showQuickAlert('You can complete it later from the Profile button. / बाद में Profile बटन से भर सकते हैं।'); }
+function skipProfile() { updateAuthUI(); switchTab('profile'); showQuickAlert('You can complete it later from the Profile button. / बाद में Profile बटन से भर सकते हैं।'); }
 
 /* ---------- login / logout ---------- */
 async function handleLogin() {
@@ -364,7 +436,7 @@ async function handleLogin() {
   closeAuth(); updateAuthUI(); showQuickAlert(t('msg.loggedIn'));
 }
 
-function logout() { localStorage.removeItem(SESSION_KEY); updateAuthUI(); showQuickAlert(t('msg.loggedOut')); }
+function logout() { localStorage.removeItem(SESSION_KEY); updateAuthUI(); showQuickAlert(t('msg.loggedOut')); if (location.hash === '#profile') switchTab('about'); }
 
 function updateAuthUI() {
   const user = currentUser();

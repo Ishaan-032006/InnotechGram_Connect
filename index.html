@@ -58,7 +58,7 @@
 
         <div id="user-chip" class="hidden items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm px-4 py-2.5 rounded-xl">
           <i class="fa-solid fa-user"></i><span id="user-name" class="font-semibold max-w-[100px] truncate"></span>
-          <button onclick="openProfile()" id="profile-btn" class="text-emerald-700 hover:underline ml-1">Profile</button>
+          <button onclick="switchTab('profile')" id="profile-btn" class="text-emerald-700 hover:underline ml-1">Profile</button>
           <button onclick="logout()" class="text-red-600 hover:underline ml-1" data-i18n="auth.logout">Logout</button>
         </div>
       </div>
@@ -287,43 +287,6 @@
         <tr class="border-t"><td class="px-5 py-4" data-i18n="crop.mustard">Mustard</td><td class="px-5 py-4" data-i18n="mandi.local">Local Mandi</td><td class="px-5 py-4">5,650</td><td class="px-5 py-4 text-red-600 font-semibold" data-i18n="trend.down">▼ Down</td></tr>
       </tbody></table></div>
   </div>
-
-  <div class="card-element bg-emerald-50 p-6 sm:p-8 rounded-2xl border border-emerald-100">
-    <h3 class="font-bold text-xl mb-3"><i class="fa-solid fa-cloud-sun-rain text-emerald-600 mr-2"></i> <span data-i18n="ag.weatherTitle">Weather & Crop Advisory</span></h3>
-    <p class="text-slate-700 leading-relaxed" data-i18n="ag.weatherText">Light rain is expected over the next 3 days. Keep harvested crops covered and stop irrigation.</p>
-  </div>
-</section>
-
-<!-- ===================== PAGE 5: HEALTH ===================== -->
-<section id="view-health" class="view-content hidden max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-  <div class="page-banner bg-gradient-to-r from-red-600 to-rose-600">
-    <div class="flex items-center gap-5">
-      <div class="banner-icon"><i class="fa-solid fa-user-doctor"></i></div>
-      <div>
-        <h2 class="text-3xl sm:text-4xl font-bold" data-i18n="he.title">Health Services</h2>
-        <p class="text-red-100 text-sm sm:text-base mt-1" data-i18n="mod3.desc">Nearby Primary Health Centers, tele-consultation & ambulances.</p>
-      </div>
-    </div>
-    <button onclick="switchTab('about')" class="back-btn"><i class="fa-solid fa-arrow-left mr-2"></i><span data-i18n="ui.back">Back to Home</span></button>
-  </div>
-
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-7">
-    <div class="card-element bg-white border border-red-100 p-8 rounded-2xl shadow-sm hover:shadow-lg">
-      <div class="w-14 h-14 rounded-xl bg-red-100 text-red-600 flex items-center justify-center text-2xl mb-5"><i class="fa-solid fa-hospital"></i></div>
-      <h3 class="font-bold text-xl mb-2" data-i18n="he.phc">Primary Health Center</h3>
-      <p class="text-slate-600 leading-relaxed" data-i18n="he.phcTime">OPD: 9 AM - 2 PM (Mon-Sat)</p>
-    </div>
-    <div class="card-element bg-white border border-blue-100 p-8 rounded-2xl shadow-sm hover:shadow-lg">
-      <div class="w-14 h-14 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-2xl mb-5"><i class="fa-solid fa-video"></i></div>
-      <h3 class="font-bold text-xl mb-2" data-i18n="he.tele">Tele-consultation</h3>
-      <p class="text-slate-600 leading-relaxed" data-i18n="he.teleText">Get video/audio advice from a doctor on eSanjeevani.</p>
-    </div>
-    <div class="card-element bg-white border border-emerald-100 p-8 rounded-2xl shadow-sm hover:shadow-lg">
-      <div class="w-14 h-14 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-2xl mb-5"><i class="fa-solid fa-truck-medical"></i></div>
-      <h3 class="font-bold text-xl mb-2" data-i18n="he.amb">Ambulance</h3>
-      <p class="text-slate-600 leading-relaxed" data-i18n-html="he.ambText">In an emergency, dial <a href="tel:108" class="font-bold text-red-600">108</a>.</p>
-    </div>
-  </div>
 </section>
 
 <!-- ===================== PAGE 6: JOBS ===================== -->
@@ -493,6 +456,44 @@
   </div>
 </section>
 
+<!-- ===================== PAGE: MY PROFILE (dashboard) ===================== -->
+<section id="view-profile" class="view-content hidden max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+  <div class="page-banner bg-gradient-to-r from-emerald-700 to-green-700">
+    <div class="flex items-center gap-5">
+      <div class="banner-icon"><i class="fa-solid fa-user"></i></div>
+      <div>
+        <h2 class="text-3xl sm:text-4xl font-bold">My Profile / मेरी प्रोफ़ाइल</h2>
+        <p class="text-emerald-100 text-sm sm:text-base mt-1">Your saved details. They decide which mandi, hospitals and schemes you see. / आपकी सहेजी हुई जानकारी।</p>
+      </div>
+    </div>
+    <button onclick="switchTab('about')" class="back-btn"><i class="fa-solid fa-arrow-left mr-2"></i><span data-i18n="ui.back">Back to Home</span></button>
+  </div>
+
+  <div id="dash-guest" class="hidden bg-white rounded-2xl border border-slate-200 p-8 text-center space-y-4 max-w-xl mx-auto">
+    <p class="text-slate-700">Please login to see your profile. / प्रोफ़ाइल देखने के लिए लॉगिन करें।</p>
+    <button onclick="openAuth('login')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-6 py-3 rounded-xl text-sm">Login / Register</button>
+  </div>
+
+  <div id="dash-user" class="hidden space-y-6">
+    <div class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 flex flex-wrap items-center justify-between gap-5">
+      <div>
+        <h3 id="dash-name" class="text-2xl font-bold text-slate-900"></h3>
+        <p id="dash-mobile" class="text-sm text-slate-500 mt-1"></p>
+      </div>
+      <div class="w-full sm:w-64">
+        <div class="flex justify-between text-xs font-semibold text-slate-600 mb-1"><span>Profile complete / प्रोफ़ाइल पूरी</span><span id="dash-pct"></span></div>
+        <div class="h-2 bg-slate-100 rounded-full"><div id="dash-bar" class="h-2 bg-emerald-500 rounded-full" style="width:0%"></div></div>
+      </div>
+    </div>
+    <div id="dash-grid" class="grid grid-cols-1 md:grid-cols-3 gap-5"></div>
+    <div class="flex flex-wrap gap-3">
+      <button onclick="openProfile()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-5 py-3 rounded-xl text-sm"><i class="fa-solid fa-pen mr-2"></i>Edit profile / प्रोफ़ाइल बदलें</button>
+      <button onclick="switchTab('agriculture')" class="bg-white border border-emerald-600 text-emerald-700 hover:bg-emerald-50 font-medium px-5 py-3 rounded-xl text-sm"><i class="fa-solid fa-wheat-awn mr-2"></i>Agriculture / कृषि</button>
+      <button onclick="switchTab('schemes')" class="bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 font-medium px-5 py-3 rounded-xl text-sm"><i class="fa-solid fa-file-invoice mr-2"></i>Schemes / योजनाएं</button>
+    </div>
+  </div>
+</section>
+
 <!-- ===================== PAGE: LOGIN / REGISTER (separate page) ===================== -->
 <section id="view-auth" class="view-content hidden max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 space-y-8">
   <div class="page-banner bg-gradient-to-r from-emerald-700 to-green-700">
@@ -542,10 +543,9 @@
         <p class="text-xs text-slate-500 mt-2">This helps us show mandi rates, hospitals and schemes for your area. You can skip. / इससे आपके इलाके की मंडी, अस्पताल और योजनाएं दिखेंगी। आप छोड़ सकते हैं।</p>
       </div>
       <select id="pf-state" class="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm bg-white"></select>
-      <div class="grid grid-cols-2 gap-3">
-        <input id="pf-district" type="text" placeholder="District / ज़िला" class="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-emerald-500">
-        <input id="pf-village" type="text" placeholder="Village / गाँव" class="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-emerald-500">
-      </div>
+      <input id="pf-district" list="pf-district-list" autocomplete="off" placeholder="District / ज़िला (type to search / लिखकर खोजें)" class="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-emerald-500">
+      <datalist id="pf-district-list"></datalist>
+      <input id="pf-village" type="text" placeholder="Village / गाँव" class="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-emerald-500">
       <select id="pf-occupation" onchange="toggleFarmFields()" class="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm bg-white">
         <option value="">Occupation / पेशा</option>
         <option value="farmer">Farmer / किसान</option>
@@ -643,6 +643,7 @@
      extras.js REMOVED: it was an old file (needs #mobile-nav and GC which do not exist here) and threw an error on every load. -->
 <script src="lang.js"></script>
 <script src="i18n.js"></script>
+<script src="districts.js"></script>
 <script src="app.js"></script>
 <script src="extra.js"></script>
 

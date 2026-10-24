@@ -1,4 +1,3 @@
-
 /* GramConnect extra.js
    1. Language page (pickLang / handleLangChange)
    2. Login/Register as a page (openAuth / closeAuth)
@@ -51,7 +50,7 @@ window.closeAuth = function () { switchTab('about'); }; // app.js calls this aft
    'about' = Home page (About GramConnect, Mission, Modules). */
 (function () {
   const pages = ['home', 'about', 'schemes', 'haq-meter', 'agriculture', 'health', 'jobs', 'notices',
-                 'helpline', 'services', 'contact', 'auth', 'language', 'team'];
+                 'helpline', 'services', 'contact', 'auth', 'profile', 'language', 'team'];
   const baseSwitch = window.switchTab; // original function from app.js
 
   function show(name) {
