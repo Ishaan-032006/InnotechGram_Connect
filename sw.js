@@ -1,10 +1,16 @@
+
 /* GramConnect service worker: offline support.
    Pehli baar online khulne par app shell + CDN files cache ho jaati hain. */
-const CACHE = 'gramconnect-v3';
-const SHELL = ['./', 'index.html', 'style.css', 'app.js', 'i18n.js', 'extras.js'];
+const CACHE = 'gramconnect-v4';
+const SHELL = ['./', 'index.html', 'style.css', 'lang.js', 'i18n.js', 'app.js', 'extra.js', 'farm.jpg'];
 
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
+  // Har file alag add hoti hai: koi ek file missing ho (jaise farm.jpg) to baaki cache hoti rahengi.
+  e.waitUntil(
+    caches.open(CACHE)
+      .then(c => Promise.all(SHELL.map(url => c.add(url).catch(() => {}))))
+      .then(() => self.skipWaiting())
+  );
 });
 
 self.addEventListener('activate', e => {
