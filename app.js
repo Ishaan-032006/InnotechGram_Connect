@@ -1,4 +1,3 @@
-
 /* ===== EXTRA TRANSLATION KEYS (used by app.js; lang.js must load first) ===== */
 Object.assign(DICT.en, {
   "sch.details": "Details & Apply",
@@ -222,72 +221,174 @@ function openModal(title, body, category, url, siteText){
 }
 function closeModal(){document.getElementById('info-modal').classList.add('hidden');}
 
-/* ===== AUTH (frontend demo, localStorage) ===== */
-const USERS_KEY='gc_users', SESSION_KEY='gc_session';
-function getUsers(){try{return JSON.parse(localStorage.getItem(USERS_KEY))||{};}catch{return {};}}
-async function hashPwd(p){
-  if(!(window.crypto&&crypto.subtle)) return btoa(unescape(encodeURIComponent(p)));
-  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(p));
-  return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
+const USERS_KEY = 'gc_users', SESSION_KEY = 'gc_session';
+
+const STATES = ["Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh","Goa","Gujarat","Haryana","Himachal Pradesh","Jharkhand","Karnataka","Kerala","Madhya Pradesh","Maharashtra","Manipur","Meghalaya","Mizoram","Nagaland","Odisha","Punjab","Rajasthan","Sikkim","Tamil Nadu","Telangana","Tripura","Uttar Pradesh","Uttarakhand","West Bengal","Andaman and Nicobar Islands","Chandigarh","Dadra and Nagar Haveli and Daman and Diu","Delhi","Jammu and Kashmir","Ladakh","Lakshadweep","Puducherry"];
+const CROPS = ["Wheat","Rice (Paddy)","Mustard","Maize","Sugarcane","Potato","Onion","Tomato","Pulses","Cotton","Other"];
+
+/* ---------- storage helpers ---------- */
+function getUsers() { try { return JSON.parse(localStorage.getItem(USERS_KEY)) || {}; } catch { return {}; } }
+function saveUsers(u) { try { localStorage.setItem(USERS_KEY, JSON.stringify(u)); } catch {} }
+function currentUser() { const m = localStorage.getItem(SESSION_KEY); return m ? getUsers()[m] || null : null; }
+
+async function hashPwd(p) {
+  if (!(window.crypto && crypto.subtle)) return btoa(unescape(encodeURIComponent(p)));
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(p));
+  return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
 }
-function showAuthError(m){const e=document.getElementById('auth-error');e.textContent=m;e.classList.toggle('hidden',!m);}
-function openAuth(mode='login'){document.getElementById('auth-modal').classList.remove('hidden');switchAuth(mode);}
-function closeAuth(){document.getElementById('auth-modal').classList.add('hidden');showAuthError('');}
-function switchAuth(mode){
+
+/* ---------- page control ---------- */
+function showAuthError(m) { const e = document.getElementById('auth-error'); e.textContent = m; e.classList.toggle('hidden', !m); }
+function openAuth(mode = 'login') { switchAuth(mode); }
+function closeAuth() { showAuthError(''); }
+
+function switchAuth(mode) {            // 'login' | 'register' | 'profile'
   showAuthError('');
-  document.getElementById('auth-login').classList.toggle('hidden',mode!=='login');
-  document.getElementById('auth-register').classList.toggle('hidden',mode!=='register');
-  const a='text-emerald-600 border-b-2 border-emerald-600', i='text-slate-500';
-  document.getElementById('auth-tab-login').className='flex-1 py-2 text-sm font-semibold '+(mode==='login'?a:i);
-  document.getElementById('auth-tab-register').className='flex-1 py-2 text-sm font-semibold '+(mode==='register'?a:i);
+  ['login', 'register', 'profile'].forEach(m =>
+    document.getElementById('auth-' + m).classList.toggle('hidden', m !== mode));
+  document.getElementById('auth-tabs').classList.toggle('hidden', mode === 'profile');
+  const on = 'text-emerald-600 border-b-2 border-emerald-600', off = 'text-slate-500';
+  document.getElementById('auth-tab-login').className = 'flex-1 py-2 text-sm font-semibold ' + (mode === 'login' ? on : off);
+  document.getElementById('auth-tab-register').className = 'flex-1 py-2 text-sm font-semibold ' + (mode === 'register' ? on : off);
 }
-async function handleRegister(){
-  const name=document.getElementById('reg-name').value.trim();
-  const mobile=document.getElementById('reg-mobile').value.trim();
-  const village=document.getElementById('reg-village').value.trim();
-  const pwd=document.getElementById('reg-password').value;
-  const confirm=document.getElementById('reg-confirm').value;
-  if(!name||!mobile||!village||!pwd) return showAuthError(t('err.required'));
-  if(!/^[6-9]\d{9}$/.test(mobile)) return showAuthError(t('err.mobile'));
-  if(pwd.length<6) return showAuthError(t('err.password'));
-  if(pwd!==confirm) return showAuthError(t('err.mismatch'));
-  const users=getUsers();
-  if(users[mobile]) return showAuthError(t('err.exists'));
-  users[mobile]={name,mobile,village,pwdHash:await hashPwd(pwd)};
-  localStorage.setItem(USERS_KEY,JSON.stringify(users));
-  localStorage.setItem(SESSION_KEY,mobile);
-  closeAuth(); updateAuthUI(); showQuickAlert(t('msg.registered').replace('{name}',name));
+
+/* ---------- STAGE 1: create account ---------- */
+async function handleRegister() {
+  const name = document.getElementById('reg-name').value.trim();
+  const mobile = document.getElementById('reg-mobile').value.trim();
+  const language = document.getElementById('reg-language').value;
+  const pwd = document.getElementById('reg-password').value;
+  const confirm = document.getElementById('reg-confirm').value;
+  const consent = document.getElementById('reg-consent').checked;
+
+  if (!name || !mobile || !pwd) return showAuthError(t('err.required'));
+  if (!/^[6-9]\d{9}$/.test(mobile)) return showAuthError(t('err.mobile'));
+  if (pwd.length < 6) return showAuthError(t('err.password'));
+  if (pwd !== confirm) return showAuthError(t('err.mismatch'));
+  if (!consent) return showAuthError('Please tick the consent box. / कृपया सहमति बॉक्स टिक करें।');
+
+  const users = getUsers();
+  if (users[mobile]) return showAuthError(t('err.exists'));
+
+  users[mobile] = {
+    name, mobile, language,
+    role: 'citizen',
+    pwdHash: await hashPwd(pwd),
+    consent: true,
+    createdAt: new Date().toISOString(),
+    profileDone: false,
+    profile: {}
+  };
+  saveUsers(users);
+  localStorage.setItem(SESSION_KEY, mobile);
+  updateAuthUI();
+  prefillProfile();
+  switchAuth('profile');               // go straight to stage 2
+  showQuickAlert('Account created! Now fill your profile. / खाता बन गया! अब प्रोफ़ाइल भरें।');
 }
-async function handleLogin(){
-  const mobile=document.getElementById('login-mobile').value.trim();
-  const pwd=document.getElementById('login-password').value;
-  const user=getUsers()[mobile];
-  if(!user||user.pwdHash!==await hashPwd(pwd)) return showAuthError(t('err.invalid'));
-  localStorage.setItem(SESSION_KEY,mobile);
+
+/* ---------- STAGE 2: profile ---------- */
+function initProfileForm() {
+  const st = document.getElementById('pf-state');
+  st.innerHTML = '<option value="">State</option>' + STATES.map(s => `<option>${s}</option>`).join('');
+  const box = document.getElementById('pf-crops');
+  box.innerHTML = '';
+  CROPS.forEach(c => {
+    const l = document.createElement('label');
+    l.className = 'inline-flex items-center gap-1 bg-white border border-slate-300 rounded-full px-2.5 py-1';
+    const i = document.createElement('input');
+    i.type = 'checkbox'; i.value = c; i.className = 'pf-crop';
+    l.appendChild(i); l.appendChild(document.createTextNode(' ' + c));
+    box.appendChild(l);
+  });
+}
+
+function toggleFarmFields() {
+  document.getElementById('pf-farm').classList.toggle('hidden',
+    document.getElementById('pf-occupation').value !== 'farmer');
+}
+
+function prefillProfile() {
+  const p = (currentUser() || {}).profile || {};
+  const set = (id, v) => { document.getElementById(id).value = v ?? ''; };
+  set('pf-state', p.state); set('pf-district', p.district); set('pf-village', p.village);
+  set('pf-occupation', p.occupation); set('pf-land', p.landAcres);
+  set('pf-gender', p.gender); set('pf-age', p.ageGroup); set('pf-category', p.category);
+  set('pf-income', p.income); set('pf-family', p.familySize);
+  document.getElementById('pf-ration').checked = !!p.hasRationCard;
+  document.getElementById('pf-bank').checked = !!p.hasBankAccount;
+  document.querySelectorAll('.pf-crop').forEach(c => { c.checked = (p.crops || []).includes(c.value); });
+  toggleFarmFields();
+}
+
+function openProfile() {
+  if (!currentUser()) return openAuth('login');
+  prefillProfile();
+  switchAuth('profile');
+  switchTab('auth');
+}
+
+function saveProfile() {
+  const users = getUsers(), mobile = localStorage.getItem(SESSION_KEY);
+  if (!mobile || !users[mobile]) return showAuthError('Please login first. / पहले लॉगिन करें।');
+  const v = id => document.getElementById(id).value.trim();
+  const isFarmer = v('pf-occupation') === 'farmer';
+
+  if (!v('pf-state') || !v('pf-district')) return showAuthError('State and district are required to show your local mandi and hospitals. / राज्य और ज़िला ज़रूरी हैं।');
+
+  users[mobile].profile = {
+    state: v('pf-state'), district: v('pf-district'), village: v('pf-village'),
+    occupation: v('pf-occupation'),
+    landAcres: isFarmer && v('pf-land') ? Number(v('pf-land')) : null,
+    crops: isFarmer ? [...document.querySelectorAll('.pf-crop:checked')].map(c => c.value) : [],
+    gender: v('pf-gender'), ageGroup: v('pf-age'), category: v('pf-category'),
+    income: v('pf-income'), familySize: v('pf-family') ? Number(v('pf-family')) : null,
+    hasRationCard: document.getElementById('pf-ration').checked,
+    hasBankAccount: document.getElementById('pf-bank').checked
+  };
+  users[mobile].profileDone = true;
+  saveUsers(users);
+  closeAuth(); updateAuthUI();
+  showQuickAlert('Profile saved. / प्रोफ़ाइल सेव हो गई।');
+}
+
+function skipProfile() { closeAuth(); updateAuthUI(); showQuickAlert('You can complete it later from the Profile button. / बाद में Profile बटन से भर सकते हैं।'); }
+
+/* ---------- login / logout ---------- */
+async function handleLogin() {
+  const mobile = document.getElementById('login-mobile').value.trim();
+  const pwd = document.getElementById('login-password').value;
+  const user = getUsers()[mobile];
+  if (!user || user.pwdHash !== await hashPwd(pwd)) return showAuthError(t('err.invalid'));
+  localStorage.setItem(SESSION_KEY, mobile);
   closeAuth(); updateAuthUI(); showQuickAlert(t('msg.loggedIn'));
 }
-function logout(){localStorage.removeItem(SESSION_KEY);updateAuthUI();showQuickAlert(t('msg.loggedOut'));}
-function updateAuthUI(){
-  const mobile=localStorage.getItem(SESSION_KEY);
-  const user=mobile?getUsers()[mobile]:null;
-  document.getElementById('auth-login-btn').classList.toggle('hidden',!!user);
-  const chip=document.getElementById('user-chip');
-  chip.classList.toggle('hidden',!user); chip.classList.toggle('flex',!!user);
-  if(user) document.getElementById('user-name').textContent=user.name;
-}
-function renderAdminUsers(){
-  const tb=document.getElementById('admin-users'); tb.innerHTML='';
-  const list=Object.values(getUsers());
-  if(!list.length){
-    const tr=document.createElement('tr');
-    const td=document.createElement('td');
-    td.className='p-3 text-slate-500'; td.colSpan=3; td.textContent=t('ad.empty');
-    tr.appendChild(td); tb.appendChild(tr);
-    return;
+
+function logout() { localStorage.removeItem(SESSION_KEY); updateAuthUI(); showQuickAlert(t('msg.loggedOut')); }
+
+function updateAuthUI() {
+  const user = currentUser();
+  document.getElementById('auth-login-btn').classList.toggle('hidden', !!user);
+  const chip = document.getElementById('user-chip');
+  chip.classList.toggle('hidden', !user); chip.classList.toggle('flex', !!user);
+  if (user) {
+    document.getElementById('user-name').textContent = user.name;
+    const pb = document.getElementById('profile-btn');
+    if (pb) pb.textContent = user.profileDone ? 'Profile' : 'Complete profile';
   }
-  list.forEach(u=>{
-    const tr=document.createElement('tr'); tr.className='border-b';
-    [u.name,u.mobile,u.village].forEach(v=>{const td=document.createElement('td');td.className='p-3';td.textContent=v;tr.appendChild(td);});
+}
+
+/* ---------- admin table (shows profile fields now) ---------- */
+function renderAdminUsers() {
+  const tb = document.getElementById('admin-users'); tb.innerHTML = '';
+  const list = Object.values(getUsers());
+  if (!list.length) { const tr0 = document.createElement('tr'), td0 = document.createElement('td'); td0.className = 'p-3 text-slate-500'; td0.colSpan = 3; td0.textContent = t('ad.empty'); tr0.appendChild(td0); tb.appendChild(tr0); return; }
+  list.forEach(u => {
+    const tr = document.createElement('tr'); tr.className = 'border-b';
+    const where = [(u.profile && u.profile.village) || u.village, u.profile && u.profile.district].filter(Boolean).join(', ') || '-';
+    [u.name, u.mobile, where].forEach(v => {
+      const td = document.createElement('td'); td.className = 'p-3'; td.textContent = v; tr.appendChild(td);
+    });
     tb.appendChild(tr);
   });
 }
@@ -301,4 +402,4 @@ function onLangChange(){
 }
 window.onLangChange = onLangChange;
 
-document.addEventListener('DOMContentLoaded',()=>{ renderSchemes(); updateAuthUI(); });
+document.addEventListener('DOMContentLoaded',()=>{ renderSchemes(); updateAuthUI(); initProfileForm(); });
